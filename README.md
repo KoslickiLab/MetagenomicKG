@@ -1,4 +1,4 @@
-# Pathogen Dection Project
+# Pathogen Detection Project
 
 ## Table of contents
 
