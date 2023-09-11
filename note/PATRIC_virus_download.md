@@ -40,13 +40,8 @@ paste cleaned_genome_summary.txt cleaned_metadata.txt | awk -F'\t' 'BEGIN {OFS="
 grep 'Human\|HUMAN\|human' output_Viruses_cleaned_metadata.tsv > output_subset_human_related_cleaned_metadata.tsv
 cat <(head -1 output_Viruses_cleaned_metadata.tsv) output_subset_human_related_cleaned_metadata.tsv > _temp_aa && mv _temp_aa output_subset_human_related_cleaned_metadata.tsv
 
-
 ### didn't use disease filter (keep all) because most of them have NO disease annotation
-sed '1d' output_subset_human_related_cleaned_metadata.tsv | cut -f 1 | wc -l
-sed '1d' output_subset_human_related_cleaned_metadata.tsv | cut -f 1 | cut -d"." -f 1 | sort | uniq -u | wc -l
 ```
-
-There are 210k strain-level records and 85 species.
 
 
 
@@ -54,21 +49,46 @@ Download data
 
 ```
 mkdir -p genomes
-cut -f 1 output_subset_human_related_cleaned_metadata.tsv | sed '1d' > download_ids.txt
+cut -f 1 output_subset_human_related_cleaned_metadata.tsv | sed '1d' | sort -u > download_ids.txt
+wc -l download_ids.txt
+cut -d"." -f 1 download_ids.txt | sort -u | wc -l 
+awk -F"\t" '$6' output_subset_human_related_cleaned_metadata.tsv | sed '1d' | cut -f 1 > download_assembly_avail_list.txt
+
+awk -F"\t" '$6' output_subset_human_related_cleaned_metadata.tsv | sort -u | wc -l
+awk -F"\t" '$6' output_subset_human_related_cleaned_metadata.tsv | cut -d"." -f 1 | sort -u | wc -l
+
+################
+# For human-related virus:
+# There are 2107k strain-level records and 3047 species.
+################
+
 
 # seems doesn't support id-based download for virus, virus seqs are merged into higher-taxa level
 
 # download all 
+mkdir -p genomes
+cd genomes
 wget ftp://ftp.bvbrc.org/viruses/*.fna
 cat *.fna > merged_virus_seq.fna
+grep "^>" merged_virus_seq.fna | rev | cut -d"]" -f 2 | cut -d"|" -f 1 | rev | sed 's/ //g' | sort -u > merged_virus_list.txt
+
 grep -f ../download_ids.txt merged_virus_list.txt | wc -l
 
 # Only 65890 / 165580 ids can be found from these fna files, need find other sources.
 
 
-wget ftp://ftp.bvbrc.org/RELEASE_NOTES/viruses/genome_metadata
+wc -l merged_virus_list.txt
+cut -d"." -f 1 merged_virus_list.txt | sort -u | wc -l 
+################
+# For what we've downloaded
+# There are 2037k strain-level records and 155k species.
+################
+
 ```
 
+Note:
 
+1. lots of strain-level records have NO seqeuence available OR only partial sequence available
+2. for the 2107k human-related records, only 18k (220 species) have assembly accessions available
 
 
