@@ -1,6 +1,12 @@
 ## Virus genome from BVBRC
 
-Followup of PATRIC database
+Followup of PATRIC database, location:
+
+```
+/data/shared_data/metagenomics_graph/pathogen_database/BV-BRC/raw_data/Virus_genomes
+```
+
+
 
 
 
@@ -10,9 +16,9 @@ Download metadata
 wget -O genome_metadata.txt   ftp://ftp.bvbrc.org/viruses/genome_metadata
 wget -O genome_summary.txt ftp://ftp.bvbrc.org/viruses/genome_summary
 
-# keep only complete or WGS data
+#
 head -1 genome_summary.txt | awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $3, $4, $5}' > cleaned_genome_summary.txt
-awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $3, $4, $5}'  genome_summary.txt | awk '$3=="Complete"' >> cleaned_genome_summary.txt
+awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $3, $4, $5}'  genome_summary.txt >> cleaned_genome_summary.txt
 
 wc -l cleaned_genome_summary.txt
 cut -f 2 cleaned_genome_summary.txt | sed '1d' | sort | uniq -c | wc -l
@@ -28,7 +34,7 @@ Merge metadata
 
 ```
 head -1 genome_metadata.txt |  awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $4, $6, $16, $18, $19, $46, $64}'  > cleaned_metadata.txt
-awk -F "\t" '$5=="Complete"' genome_metadata.txt |  awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $4, $6, $16, $18, $19, $46, $64}' >> cleaned_metadata.txt
+awk -F '\t' 'BEGIN {OFS="\t"} {print $1, $4, $6, $16, $18, $19, $46, $64}' genome_metadata.txt >> cleaned_metadata.txt
 
 # merge metadate
 # by md5sum check: the 2 files have exact same id colume, so can be paste togethe directly
@@ -59,7 +65,7 @@ awk -F"\t" '$6' output_subset_human_related_cleaned_metadata.tsv | cut -d"." -f 
 
 ################
 # For human-related virus:
-# There are 2107k strain-level records and 3047 species.
+# There are 3M strain-level records and 11k species.
 ################
 
 
@@ -89,6 +95,5 @@ cut -d"." -f 1 merged_virus_list.txt | sort -u | wc -l
 Note:
 
 1. lots of strain-level records have NO seqeuence available OR only partial sequence available
-2. for the 2107k human-related records, only 18k (220 species) have assembly accessions available
 
-
+   
