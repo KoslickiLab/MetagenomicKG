@@ -97,6 +97,8 @@ rule targets:
         os.path.join(CURRENT_PATH, "KG", 'KG_edges_v4.tsv'),
         os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v5.tsv'),
         os.path.join(CURRENT_PATH, "KG", 'KG_edges_v5.tsv'),
+        os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v6.tsv'),
+        os.path.join(CURRENT_PATH, "KG", 'KG_edges_v6.tsv'),
         os.path.join(CURRENT_PATH, "neo4j", "input_files", 'nodes_header.tsv'),
         os.path.join(CURRENT_PATH, "neo4j", "input_files", 'edges_header.tsv'),
         os.path.join(CURRENT_PATH, "neo4j", "input_files", 'nodes.tsv'),
@@ -242,12 +244,30 @@ rule step5_integrate_micropheno_data:
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --data_dir {input.data_dir} --synonymizer_dir {input.synonymizer_dir} --synonymizer_dbname {params.synonymizer_dbname} --umls_api_key {params.umls_api_key} --output_dir {input.output_dir}")
 
+# Integrate AMR data into a KG
+rule step6_integrate_amr_data:
+    input:
+        script = ancient(os.path.join(CURRENT_PATH, "scripts", "integrate_AMR.py")),
+        existing_KG_nodes = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v5.tsv')),
+        existing_KG_edges = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_edges_v5.tsv')),
+        amr_result = ancient(os.path.join(CURRENT_PATH, 'AMRFinderResults', 'all_AMR_result.tsv')),
+        amr_metadata = ancient(os.path.join(CURRENT_PATH, 'AMRFinderResults', 'ReferenceGeneCatalog.txt')),
+        output_dir = ancient(os.path.join(CURRENT_PATH, "KG"))
+    params:
+        coverage_threshold = 80,
+        identity_threshold = 90
+    output:
+        os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v6.tsv'),
+        os.path.join(CURRENT_PATH, "KG", 'KG_edges_v6.tsv')
+    run:
+        shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --amr_result {input.amr_result} --amr_metadata {input.amr_metadata} --coverage_threshold {params.coverage_threshold} --identity_threshold {params.identity_threshold} --output_dir {input.output_dir}")
+
 # Prepare neo4j input files
 rule step6_prepare_neo4j_inputs:
     input:
         script = ancient(os.path.join(CURRENT_PATH, "scripts", "prepare_neo4j_inputs.py")),
-        existing_KG_nodes = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v5.tsv')),
-        existing_KG_edges = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_edges_v5.tsv')),
+        existing_KG_nodes = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_nodes_v6.tsv')),
+        existing_KG_edges = ancient(os.path.join(CURRENT_PATH, "KG", 'KG_edges_v6.tsv')),
         kg_dir = ancient(os.path.join(CURRENT_PATH, "KG"))
     params:
         output_dir = os.path.join(CURRENT_PATH, "neo4j", "input_files")
