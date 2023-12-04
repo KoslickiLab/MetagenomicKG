@@ -75,11 +75,12 @@ class Node:
         self.is_pathogen = is_pathogen
 
 class Edge:
-    def __init__(self, source_node: str, target_node: str, predicate: str, knowledge_source: List[str] = []):
+    def __init__(self, source_node: str, target_node: str, predicate: str, description: List[Tuple] = [], knowledge_source: List[str] = []):
         self.edge_id = None
         self.source_node = source_node
         self.target_node = target_node
         self.predicate = predicate
+        self.description = list(set(description))
         self.knowledge_source = list(set(knowledge_source))
 
 
@@ -88,8 +89,8 @@ class KnowledgeGraph:
         self.logger = logger
         self.nodes = {}
         self.edges = {}
-        self.node_type_count = {'Microbe': 0, 'Pathway': 0, 'KO': 0, 'Network': 0, 'Disease': 0 , 'Drug': 0, 'Drug_Group': 0, 'Module': 0, 'Compound': 0, 'Enzyme': 0, 'Glycan': 0, 'Reaction': 0, 'Phenotypic_Feature': 0}
-        self.mapping_nodetype_biolink = {'Microbe': 'biolink:OrganismTaxon', 'Pathway': 'biolink:Pathway', 'KO': 'biolink:BiologicalEntity', 'Network': 'biolink:NamedThing', 'Disease': 'biolink:Disease', 'Drug': 'biolink:Drug', 'Drug_Group': 'biolink:MolecularMixture', 'Module': 'biolink:BiologicalProcess', 'Compound': 'biolink:MolecularEntity', 'Enzyme': 'biolink:Polypeptide', 'Glycan': 'biolink:MacromolecularComplex', 'Reaction': 'biolink:MolecularActivity', 'Phenotypic_Feature': 'biolink:PhenotypicFeature'}
+        self.node_type_count = {'Microbe': 0, 'Pathway': 0, 'KO': 0, 'Network': 0, 'Disease': 0 , 'Drug': 0, 'Drug_Group': 0, 'Module': 0, 'Compound': 0, 'Enzyme': 0, 'Glycan': 0, 'Reaction': 0, 'Phenotypic_Feature': 0, 'AMR': 0}
+        self.mapping_nodetype_biolink = {'Microbe': 'biolink:OrganismTaxon', 'Pathway': 'biolink:Pathway', 'KO': 'biolink:BiologicalEntity', 'Network': 'biolink:NamedThing', 'Disease': 'biolink:Disease', 'Drug': 'biolink:Drug', 'Drug_Group': 'biolink:MolecularMixture', 'Module': 'biolink:BiologicalProcess', 'Compound': 'biolink:MolecularEntity', 'Enzyme': 'biolink:Polypeptide', 'Glycan': 'biolink:MacromolecularComplex', 'Reaction': 'biolink:MolecularActivity', 'Phenotypic_Feature': 'biolink:PhenotypicFeature', 'AMR': 'biolink:Protein'}
         self.all_node_type = list(self.mapping_nodetype_biolink.keys()) + list(self.mapping_nodetype_biolink.values())
         self.mapping_biolink_nodetype = {v: k for k, v in self.mapping_nodetype_biolink.items()}
         self.map_synonym_to_node_id = {}
@@ -209,6 +210,14 @@ class KnowledgeGraph:
             self.edges[edge.edge_id] = edge
         else:
             # self.edges[edge.edge_id].predicate = list(set(self.edges[edge.edge_id].predicate + edge.predicate))
+            temp_description_dict = dict(edge.description)
+            old_temp_description_dict = dict(self.edges[edge.edge_id].description)
+            for key in temp_description_dict:
+                if key in old_temp_description_dict:
+                    old_temp_description_dict[key] = '#####'.join(list(set([temp_description_dict[key]] + old_temp_description_dict[key].split('#####'))))
+                else:
+                    old_temp_description_dict[key] = temp_description_dict[key]
+            self.edges[edge.edge_id].description = list(old_temp_description_dict.items())
             self.edges[edge.edge_id].knowledge_source = list(set(self.edges[edge.edge_id].knowledge_source + edge.knowledge_source))
         
         # Add edge to the in_edge and out_edge
@@ -288,6 +297,7 @@ class KnowledgeGraph:
                 "source_node": edge.source_node,
                 "target_node": edge.target_node,
                 "predicate": edge.predicate,
+                "description": edge.description,
                 "knowledge_source": edge.knowledge_source
             })
         return pd.DataFrame(data)
@@ -330,6 +340,10 @@ class KnowledgeGraph:
             edge_df = pd.DataFrame(edge_data)
         # convert edge attribute to correct type
         # edge_df['predicate'] = edge_df['predicate'].apply(lambda x: eval(x))
+        if 'description' in edge_df.columns:
+            edge_df['description'] = edge_df['description'].apply(lambda x: eval(x))
+        else:
+            edge_df['description'] = [[]] * edge_df.shape[0]
         edge_df['knowledge_source'] = edge_df['knowledge_source'].apply(lambda x: eval(x))
 
         ## Add nodes and edges to the graph

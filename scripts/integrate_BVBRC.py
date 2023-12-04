@@ -146,6 +146,8 @@ if __name__ == "__main__":
         for disease_name_list2 in disease_name_list1.split(';'):
             for disease_name_list3 in disease_name_list2.split(','):
                 for disease_name in disease_name_list3.split('/'):
+                    if disease_name == '':
+                        continue
                     disease_name = disease_name.strip()
                     if disease_name in ['other', 'Not connected', 'agn', 'and sepsis', 'and soft tissue infections.', 'healthy', 'healthy controls', 'healty', 'lrti', 'pcs']:
                         continue

@@ -422,31 +422,32 @@ if __name__ == "__main__":
                     kg.add_edge(Edge(source_node=target_node, target_node=source_node, predicate='biolink:genetically_associated_with', knowledge_source=['KEGG']))
 
     #FIXME: Consider if we need to connect non-virus genome to other node types based on genes because they are too many
-    # # bacteria/fungi/archaea
-    # flag = False
-    # link_file_list = glob(os.path.join(args.kegg_processed_data_dir,'organisms','link_*'))
-    # for dir_path in tqdm(link_file_list, desc='integrating bacteria/fungi/archaea gene-based connections'):
-    #     if os.path.basename(dir_path).replace('link_','').replace('_to_gene','') in ['brite','uniprot','pfam','rs','pdb','ncbi_proteinid']:
-    #         continue
-    #     file_type = os.path.basename(dir_path).replace('link_','').replace('_to_gene','')
-    #     for file_path in [os.path.join(dir_path,x) for x in os.listdir(dir_path)]:
-    #         org_code = os.path.basename(file_path).split('_')[0]
-    #         if org_code in orgcode_to_gnid:
-    #             infile = pd.read_csv(file_path, sep='\t', header=None)
-    #             for row in infile.to_numpy():
-    #                 _, node_ids = row
-    #                 for node_id in node_ids.split(';'):
-    #                     if file_type == 'pathway':
-    #                         node_id = node_id.replace(f":{org_code}", ':map').replace(':','_')
-    #                     if file_type == 'module':
-    #                         node_id = node_id.replace(f"{org_code}_", "").replace(':','_')
+    # bacteria/fungi/archaea
+    flag = False
+    link_file_list = glob(os.path.join(args.kegg_processed_data_dir,'organisms','link_*'))
+    for dir_path in tqdm(link_file_list, desc='integrating bacteria/fungi/archaea gene-based connections'):
+        if os.path.basename(dir_path).replace('link_','').replace('_to_gene','') in ['brite','uniprot','pfam','rs','pdb','ncbi_proteinid']:
+            continue
+        file_type = os.path.basename(dir_path).replace('link_','').replace('_to_gene','')
+        temp_file_list = [os.path.join(dir_path,x) for x in os.listdir(dir_path)]
+        for file_path in tqdm(temp_file_list, desc=f'integrating {file_type} gene-based connections'):
+            org_code = os.path.basename(file_path).split('_')[0]
+            if org_code in orgcode_to_gnid:
+                infile = pd.read_csv(file_path, sep='\t', header=None)
+                for row in infile.to_numpy():
+                    _, node_ids = row
+                    for node_id in node_ids.split(';'):
+                        if file_type == 'pathway':
+                            node_id = node_id.replace(f":{org_code}", ':map').replace(':','_')
+                        if file_type == 'module':
+                            node_id = node_id.replace(f"{org_code}_", "").replace(':','_')
 
-    #                     source_node = orgcode_to_gnid[org_code]
-    #                     target_node = f"KEGG:{node_id.replace(':','_')}"
+                        source_node = orgcode_to_gnid[org_code]
+                        target_node = f"KEGG:{node_id.replace(':','_')}"
                         
-    #                     # Add edge to the knowledge graph
-    #                     kg.add_edge(Edge(source_node=source_node, target_node=target_node, predicate=['biolink:genetically_associated_with'], knowledge_source=['KEGG']))
-    #                     kg.add_edge(Edge(source_node=target_node, target_node=source_node, predicate=['biolink:genetically_associated_with'], knowledge_source=['KEGG']))
+                        # Add edge to the knowledge graph
+                        kg.add_edge(Edge(source_node=source_node, target_node=target_node, predicate='biolink:genetically_associated_with', knowledge_source=['KEGG']))
+                        kg.add_edge(Edge(source_node=target_node, target_node=source_node, predicate='biolink:genetically_associated_with', knowledge_source=['KEGG']))
     
 
     # Save the knowledge graph
