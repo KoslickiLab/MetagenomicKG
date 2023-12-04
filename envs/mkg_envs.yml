@@ -1,4 +1,4 @@
-name: mkg_envs
+name: metagenomics_graph
 channels:
   - conda-forge
   - defaults
@@ -12,7 +12,12 @@ dependencies:
   - treelib=1.6.4
   - pytaxonkit=0.8
   - biopython=1.79
+  - ncbi-amrfinderplus=3.11.26
+  - ncbi-datasets-cli=15.30.0
+  - ncbi-genome-download=0.3.3
   - openjdk
   - pip
   - pip:
       - tqdm==4.65.0
+      - matplotlib
+      - seaborn
