@@ -3,8 +3,14 @@ channels:
   - conda-forge
   - defaults
   - bioconda
+  - pytorch
+  - nvidia
 dependencies:
   - python=3.9.16
+  - pytorch=2.0.1
+  - dgl=1.1.2
+  - cudatoolkit=11.8.0
+  - torchmetrics=1.2.1
   - requests
   - requests-cache
   - pandas
@@ -22,7 +28,7 @@ dependencies:
   - yacht
   - pip
   - pip:
-      - tqdm==4.65.0
+      - tqdm
       - distinctipy==1.3.4
       - matplotlib
       - seaborn
