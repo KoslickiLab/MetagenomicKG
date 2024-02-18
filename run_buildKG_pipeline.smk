@@ -1,8 +1,8 @@
 """
-This file is a SnakeMake Script to automate the KEGG-based Pathogen KG construction pipeline.
+This file is a SnakeMake Script to automate the MetagenomicKG construction pipeline.
 
 Usage:
-    snakemake --cores 16 -s run_pipeline.smk targets
+    snakemake --cores 16 -s run_buildKG_pipeline.smk targets
 """
 ## Import Config Files
 configfile: "./config.yaml"
@@ -14,12 +14,13 @@ import subprocess
 ## Define Some Global Variables
 ROOT_PATH = os.getcwd()
 DATA_PATH = os.path.join(ROOT_PATH, 'data')
-GTDB_version = config['GENERAL_VARIABLES']['GTDB_VERSION']
+SCRIPT_PATH = os.path.join(ROOT_PATH, 'build_KG')
+GTDB_version = config['BUILD_KG_VARIABLES']['GTDB_VERSION']
 GTDB_DOWNLOAD_URL = f'https://data.gtdb.ecogenomic.org/releases/release{GTDB_version}/{GTDB_version}.0/'
 if 'UMLS_API_KEY' in os.environ and os.environ['UMLS_API_KEY']:
     umls_apikey = os.environ['UMLS_API_KEY']
-elif 'UMLS_API_KEY' in config['GENERAL_VARIABLES'] and config['GENERAL_VARIABLES']['UMLS_API_KEY']:
-    umls_apikey = config['GENERAL_VARIABLES']['UMLS_API_KEY']
+elif 'UMLS_API_KEY' in config['BUILD_KG_VARIABLES'] and config['BUILD_KG_VARIABLES']['UMLS_API_KEY']:
+    umls_apikey = config['BUILD_KG_VARIABLES']['UMLS_API_KEY']
 else:
     raise ValueError("UMLS_API_KEY is not set in the environment or the config file. Please set it in 'config.yaml' file before running the pipeline.")
 node_synonymizer_dbname = 'node_synonymizer_v1.0_KG2.8.4.sqlite'
@@ -37,10 +38,6 @@ if not os.path.exists(os.path.join(DATA_PATH, "merged_KG")):
     os.makedirs(os.path.join(DATA_PATH, "merged_KG"))
 if not os.path.exists(os.path.join(DATA_PATH, "neo4j")):
     os.makedirs(os.path.join(DATA_PATH, "neo4j"))
-if not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2")):
-    os.makedirs(os.path.join(DATA_PATH, "RTX_KG2"))
-if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data")):
-    os.makedirs(os.path.join(DATA_PATH, "Zenodo_data"))
 
 ## Download GTDB Data
 # Call the wget command using subprocess
@@ -67,8 +64,7 @@ if not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"bac120_taxonomy_r{G
 
 ## Download RTX-KG2 data
 if not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2", "kg2c-tsv.tar.gz")):
-    # add code to download the file from Zenodo
-    pass
+    raise ValueError("the kg2c-tsv.tar.gz file is not present in the RTX_KG2 folder. Please contact authors to get access and download it to ./data/RTX_KG2 folder.")
 else:
     if not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2", "nodes_c_header.tsv")) or \
         not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2", "edges_c_header.tsv")) or \
@@ -153,7 +149,7 @@ rule targets:
 # Get Taxonomy hierarchy for Archeaa and Bacteria from GTDB as well as Fungi and Viruses from NCBI Taxonomy
 rule step0_get_taxonomy:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "get_hierarchy.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "get_hierarchy.py")),
         bacteria_taxonomy = ancient(os.path.join(DATA_PATH, "GTDB_data", f"bac120_taxonomy_r{GTDB_version}.tsv")),
         archaea_taxonomy = ancient(os.path.join(DATA_PATH,  "GTDB_data", f"ar53_taxonomy_r{GTDB_version}.tsv")),
         bacteria_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", f"bac120_metadata_r{GTDB_version}.tsv")),
@@ -170,8 +166,8 @@ rule step0_get_taxonomy:
 # Process the KEGG FTP data and download KEGG link info from APIs
 rule step1_process_kegg_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "kegg_utils", "extract_KEGG_data.py")),
-        kegg_data_dir = ancient(config['GENERAL_VARIABLES']['KEGG_FTP_DATA_DIR']),
+        script = ancient(os.path.join(SCRIPT_PATH, "kegg_utils", "extract_KEGG_data.py")),
+        kegg_data_dir = ancient(config['BUILD_KG_VARIABLES']['KEGG_FTP_DATA_DIR']),
         output_dir = ancient(os.path.join(DATA_PATH, "KEGG"))
     params:
         microb_only = True
@@ -197,7 +193,7 @@ rule step1_process_kegg_data:
 # Integrate microbial hierarchy into a KG
 rule step2_integrate_microbial_hierarchy:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_microbial_hierarchy.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_microbial_hierarchy.py")),
         data_dir = ancient(os.path.join(DATA_PATH, "Micobial_hierarchy")),
         bacteria_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", "bac120_metadata_r214.tsv")),
         archaea_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", "ar53_metadata_r214.tsv")),
@@ -213,8 +209,8 @@ rule step2_integrate_microbial_hierarchy:
 # Integrate knowledge from KEGG into a KG
 rule step3_integrate_kegg_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_KEGG.py")),
-        kegg_data_dir = ancient(config['GENERAL_VARIABLES']['KEGG_FTP_DATA_DIR']),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_KEGG.py")),
+        kegg_data_dir = ancient(config['BUILD_KG_VARIABLES']['KEGG_FTP_DATA_DIR']),
         kegg_processed_data_dir = ancient(os.path.join(DATA_PATH, "KEGG_data")),
         gtdb_assignment = ancient(os.path.join(DATA_PATH, "taxonomy_assignment_by_GTDB_tk", "merged_KEGG_assignment.tsv")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v1.tsv')),
@@ -237,7 +233,7 @@ rule step3_integrate_kegg_data:
 # Integrate KG2 data into into a KG
 rule step4_integrate_kg2_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_KG2.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_KG2.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v2.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v2.tsv')),
         data_dir = ancient(os.path.join(DATA_PATH, "RTX_KG2")),
@@ -251,7 +247,7 @@ rule step4_integrate_kg2_data:
 # Integrate BVBRC data into the a KG
 rule step5_integrate_bvbrc_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_BVBRC.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_BVBRC.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v3.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v3.tsv')),
         data_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database", "BV-BRC")),
@@ -273,7 +269,7 @@ rule step5_integrate_bvbrc_data:
 # Integarte MicroPhenoDB data into a KG
 rule step5_integrate_micropheno_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_MicroPhenoDB.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_MicroPhenoDB.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v4.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v4.tsv')),
         data_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data", 'pathogen_database', 'MicroPhenoDB')),
@@ -291,7 +287,7 @@ rule step5_integrate_micropheno_data:
 # Integrate AMR data into a KG
 rule step6_integrate_amr_data:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "integrate_AMR.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "integrate_AMR.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v5.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv')),
         amr_result = ancient(os.path.join(DATA_PATH, "Zenodo_data", 'AMRFinderResults', 'all_AMR_result.tsv')),
@@ -310,7 +306,7 @@ rule step6_integrate_amr_data:
 # Prepare neo4j input files
 rule step7_prepare_neo4j_inputs:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "neo4j_utils", "prepare_neo4j_inputs.py")),
+        script = ancient(os.path.join(SCRIPT_PATH, "neo4j_utils", "prepare_neo4j_inputs.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
         kg_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
@@ -327,7 +323,7 @@ rule step7_prepare_neo4j_inputs:
 # Import KG into Neo4j
 rule step8_import_kg_into_neo4j:
     input:
-        script = ancient(os.path.join(ROOT_PATH, "build_KG", "neo4j_utils", "tsv_to_neo4j.sh")),
+        script = ancient(os.path.join(SCRIPT_PATH, "neo4j_utils", "tsv_to_neo4j.sh")),
         nodes_header = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes_header.tsv')),
         edges_header = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges_header.tsv')),
         nodes = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv')),
