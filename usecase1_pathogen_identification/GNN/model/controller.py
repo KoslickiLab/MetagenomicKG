@@ -71,7 +71,7 @@ class ModelController(object):
         
         # initialize result
         self.summary_cv_test_dict = dict()
-        self.summary_table_test_cv = os.path.join(self.output_dir, self.experiment_name, f"performance_summary_test.tsv")
+        self.summary_table_test_cv = os.path.join(self.output_dir, f"performance_summary_test.tsv")
 
     def run(self):
         """
@@ -177,7 +177,7 @@ class ModelController(object):
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=self.factor, patience=self.patience, threshold=0.00001, threshold_mode='rel')
 
         ## set up tensorboard
-        writer = SummaryWriter(log_dir=os.path.join(self.output_dir, self.experiment_name, 'tensorboard_runs'))
+        writer = SummaryWriter(log_dir=os.path.join(self.output_dir, 'tensorboard_runs'))
 
         data = {"train_dataloader": train_dataloader,
                 "train_sorted_X": train_sorted_X,
@@ -224,7 +224,7 @@ class ModelController(object):
             model_name (str): model filename name
         Returns: None
         """
-        save_dir = os.path.join(self.output_dir, self.experiment_name)
+        save_dir = self.output_dir
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         
@@ -239,7 +239,7 @@ class ModelController(object):
             data_name (str): data filename name
         Returns: None
         """
-        save_dir = os.path.join(self.output_dir, self.experiment_name)
+        save_dir = self.output_dir
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         
@@ -257,12 +257,12 @@ class ModelController(object):
         Returns:
             model_state (model.state_dict): model parameters
         """
-        save_dir = os.path.join(self.output_dir, self.experiment_name)
+        save_dir = self.output_dir
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         
         # load model
-        model_state = torch.load(os.path.join(self.output_dir, self.experiment_name, model_name))
+        model_state = torch.load(os.path.join(self.output_dir, model_name))
         return model_state
 
     def update_model_stats(self, acc, pos_acc, neg_acc, auroc, ap, f1score, type):
@@ -331,13 +331,13 @@ class ModelController(object):
             type (str): type of data (train, val, test, or holdout)
         Returns: None
         """
-        pr_path = os.path.join(self.output_dir, self.experiment_name, f"{type}_precision-recall_curve.png")
+        pr_path = os.path.join(self.output_dir, f"{type}_precision-recall_curve.png")
         p = sns.lineplot(x=recall, y=precision)
         p.set(xlabel="Recall", ylabel="Precision")
         plt.savefig(pr_path, bbox_inches='tight')
         plt.clf()
 
-        roc_path = os.path.join(self.output_dir, self.experiment_name, f"{type}_roc_curve.png")
+        roc_path = os.path.join(self.output_dir, f"{type}_roc_curve.png")
         p = sns.lineplot(x=fpr, y=tpr)
         p.set(xlabel="FPR", ylabel="TPR")
         plt.savefig(roc_path, bbox_inches='tight')
