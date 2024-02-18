@@ -1,40 +1,23 @@
 # MetagenomicKG
-MetagenomicKG is a novel metagenomics knowledge graph which integrates the commonly-used taxonomic information and other biomedical knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. 
-
-## Environment Installation
-We recommend using a virtual environment to ensure a clean and isolated workspace for reproducibility. This can be accomplished using either [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) or [Mamba](https://github.com/mamba-org/mamba) (a faster alternative to Conda).
-
-#### Using Conda
-To create your Conda environment, follow these steps:
-
-```bash
-# Clone the YACHT repository
-git clone https://github.com/KoslickiLab/MetagenomicKG.git
-cd MetagenomicKG
-
-# Create a new virtual environment named 'metagenomickg_env'
-conda env create -f env/metagenomickg_env.yml
-
-# Activate the newly created environment
-conda activate metagenomickg_env
-```
-
-#### Using Mamba
-If you prefer using Mamba instead of Conda, just simply repalce `conda` with `mamba` in the above commands.
-
-
+MetagenomicKG is a novel metagenomics knowledge graph which integrates the commonly-used taxonomic information and other biomedical knowledge.
 
 ## Table of contents
 
-- [Goal](#goal-of-this-project)
-- [MKG](#about-microbial-knowledge-graph)
-- [Current Idea](#current-idea)
+- [Metagenomic](#metagenomickg)
+  * [About Graph](#about-graph)
+  * [Virtual Environment Installation](#virtual-environment-installation)
+    + [Using Conda](#using-conda)
+    + [Using Mamba](#using-mamba)
+  * [Modify `config.yaml` File If Needed ](#modify-configyaml-file-if-needed)
+    + [UMLS API key](#umls-api-key)
+    + [KEGG FTP Data](#kegg-ftp-data)
+  * [Build MetagenomicKG](#build-metagenomickg)
+  * [Use Case1 Pathogen Identification](#use-case1-pathogen-identification)
+  
+## About Graph
+MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 13 node types and 35 edge types (see statistics in the table below).
 
-## Goal of This Project
-The goal of this project is to develop a algorithemic method to identify the causative miroorganism for diseases via the taxonomic profile generated from some metagenoimcs tools (e.g. [metalign](https://github.com/nlapier2/Metalign) and etc.) and biomedical knowledge graph (e.g. kg2) developed by [ARAX](https://github.com/RTXteam/RTX) project.  
-
-## About Microbial Knowledge Graph
-The Microbial knowledge graph is a directed graph that currently includes knowledge from five different sources (e.g., [KEGG](https://www.genome.jp/kegg/), [RTX-KG2](https://github.com/RTXteam/RTX-KG2), [BV-BRC](https://www.bv-brc.org/), [MicroPhenoDB](http://lilab2.sysu.edu.cn/microphenodb/#/home). It consists of 13 node types and 35 edge types (see statistics in the table below). For mirobe nodes, we integrate the taxonomy hierarchy of all bacteria and archaea from GTDB, as well as the hierarchy of fungi and viruses from NCBI. 
+We have provided the pre-built version of MetagenomicKG, you can download it from [here](). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
 
 __Node Statistics__
 | **Node Type**             | **Node Count** |
@@ -93,40 +76,53 @@ __Edge Statistics__
 | derives from                   | 1              |
 | disease has basis in           | 1              |
 | disrupts                       | 1              |
+|                                |                |
 
+## Virtual Environment Installation
+We recommend using a virtual environment to ensure a clean and isolated workspace for reproducibility. This can be accomplished using either [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) or [Mamba](https://github.com/mamba-org/mamba) (a faster alternative to Conda).
 
-### How to Build
-We built an automatic pipeline to build this microbial knowledge graph via [Snakemake](https://snakemake.readthedocs.io/en/stable).
+### Using Conda
+To create your Conda environment, follow these steps:
 
-Please follow the steps below to run this pipeline:
-
-1. install conda and then run the following commands to setup enironment
 ```bash
-conda env create -f envs/mkg_envs.yml
+# Clone the YACHT repository
+git clone https://github.com/KoslickiLab/MetagenomicKG.git
+cd MetagenomicKG
 
-## activiate the 'mkg_envs' conda environment
-conda activate mkg_envs.yml
+# Create a new virtual environment named 'metagenomickg_env'
+conda env create -f env/metagenomickg_env.yml
+
+# Activate the newly created environment
+conda activate metagenomickg_env
 ```
 
-2. run pipeline via the following command
+### Using Mamba
+If you prefer using Mamba instead of Conda, just simply repalce `conda` with `mamba` in the above commands.
+
+## Modify `config.yaml` File If Needed 
+Before rebuilding MetagenomicKG and replicating the results of use cases, you can should modify some global variables in the `config.yaml` file. We listed some required variables below: 
+
+### UMLS API key
+Since we utilize the Unified Medical Language System (UMLS) search function via UMLS APIs for identifier mapping, you should first get a UMLS API key (please follow [this instruction](https://documentation.uts.nlm.nih.gov/rest/authentication.html) to get one). After that, replace `UMLS_API_KEY` with your API key in the `config.yaml` file.
+
+### KEGG FTP Data
+MetagenomicKG includes KEGG data downloaded from KEGG FTP. According to KEGG policy, we can provide this dataset. To obtain this dataset, you can follow [this instruction](https://www.kegg.jp/kegg/download/). Once you download data, you should replace the path of `KEGG_FTP_DATA_DIR` key in the `config.yaml` file.
+
+## Build MetagenomicKG
+We constructed an automatic pipeline to rebuild MetagenomicKG via [Snakemake](https://snakemake.readthedocs.io/en/stable). Since MetagenomicKG uses [RTX-KG2](https://github.com/RTXteam/RTX-KG2), which includes UMLS data, you need to contact authors in order to demonstrate that you have accepted [the license terms](https://www.nlm.nih.gov/databases/umls.html) in order to get access to download KG2. Once you have access, please download it to `./data/RTX_KG2` folder.
+
+After downloading the RTX-KG2 TSV files is done, you can run the pipeline via:
 ```bash
-snakemake --cores 16 -s run_pipeline.smk targets
+snakemake --cores 16 -s run_buildKG_pipeline.smk targets
 ``` 
 
+Once it is completed, you can find merged node and edge TSV files (`KG_nodes_v6.tsv` and `KG_edges_v6.tsv`) from `./data/merged_KG` folder.
 
-## Current Idea:
-1. Novel microbe-disease/phenotypic feature prediction
-  * Use GraphSage to convert the microbe and disease/phenotypic feature nodes in KG2 to embedding vectors
-  * Use PCA/t-SNE to reduce dimension of embedding vectors and cluster some similar nodes
-  * Use the known microbe-disease/phenotypic feature relatinship to find novel association
+## Use Case1 Pathogen Identification
+To replicate the results of use case 1, you can simply run the Snakemake pipelie via:
+```bash
+snakemake --cores 16 -s run_usecase1_pipeline.smk targets
+``` 
 
-2. Finding known pathogens in people with/witout disease
-* __input__: EHR, meta tax profile
-* __challenges__:
-  * Define some metric to find causative pathogen
-  * How to obtain input data
-    * collaborate with clinicians in Hersey 
-    * case studies + publications 
-      * manually take a look
-      * find pubd id in semdedb that contains both microbe + sysmpytoms 
-      * Sequence databases, Qitta [16s rRNA], SRA at NCBI WGS metadata)
+## Contact
+If you have any questions or need help, please contact @chunyuma or @ShaopengLiu1 or  @dkoslicki.
