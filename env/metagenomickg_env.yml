@@ -22,7 +22,7 @@ dependencies:
   - ncbi-amrfinderplus
   - ncbi-datasets-cli
   - ncbi-genome-download
-  - gtdbtk
+  - gtdbtk=2.3.2
   - openjdk
   - sourmash
   - yacht
