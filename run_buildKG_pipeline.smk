@@ -24,7 +24,6 @@ elif 'UMLS_API_KEY' in config['BUILD_KG_VARIABLES'] and config['BUILD_KG_VARIABL
 else:
     raise ValueError("UMLS_API_KEY is not set in the environment or the config file. Please set it in 'config.yaml' file before running the pipeline.")
 node_synonymizer_dbname = 'node_synonymizer_v1.0_KG2.8.4.sqlite'
-neo4j_version = '3.5.26'
 neo4j_dbname = 'MetagenomicsKG'
 
 ## Create Required Folders
@@ -92,20 +91,31 @@ else:
         if result.returncode == 0:
             print("File extracted successfully!")
         else:
-            print("Error extracting file.")
+            print("Error extracting file for pathogen_database.")
 
-## Download Neo4j
-if not os.path.exists(os.path.join(ROOT_PATH, "neo4j", f"neo4j-community-{neo4j_version}-unix.tar.gz")):
-    result = subprocess.run(["wget", "-O", os.path.join(ROOT_PATH, "neo4j", f"neo4j-community-{neo4j_version}-unix.tar.gz"), "https://dist.neo4j.org/neo4j-community-{neo4j_version}-unix.tar.gz"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Check if the download was successful
-    if result.returncode == 0:
-        result = subprocess.run(["tar", "-xvzf", os.path.join(ROOT_PATH, "neo4j", f"neo4j-community-{neo4j_version}-unix.tar.gz"), '-C', os.path.join(ROOT_PATH, "neo4j")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# Download GTDB_tk taxonomy assignment
+if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk.tar.gz")):
+    # add code to download the file from Zenodo
+    pass
+else:
+    if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk")):
+        result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
-            print("File downloaded and extracted successfully!")
+            print("File extracted successfully!")
         else:
-            print("Error extracting file.")
-    else:
-        print("Error downloading file.")
+            print("Error extracting file for taxonomy_assignment_by_GTDB_tk.")
+
+# Download AMRFinderResults
+if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults.tar.gz")):
+    # add code to download the file from Zenodo
+    pass
+else:
+    if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults")):
+        result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode == 0:
+            print("File extracted successfully!")
+        else:
+            print("Error extracting file for AMRFinderResults.")
 
 
 ## Build Rules
@@ -139,11 +149,8 @@ rule targets:
         os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes_header.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges_header.tsv'),
         os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "import_to_neo4j_done.txt")
+        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv')
 
 
 # Get Taxonomy hierarchy for Archeaa and Bacteria from GTDB as well as Fungi and Viruses from NCBI Taxonomy
@@ -212,7 +219,7 @@ rule step3_integrate_kegg_data:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_KEGG.py")),
         kegg_data_dir = ancient(config['BUILD_KG_VARIABLES']['KEGG_FTP_DATA_DIR']),
         kegg_processed_data_dir = ancient(os.path.join(DATA_PATH, "KEGG_data")),
-        gtdb_assignment = ancient(os.path.join(DATA_PATH, "taxonomy_assignment_by_GTDB_tk", "merged_KEGG_assignment.tsv")),
+        gtdb_assignment = ancient(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk", "merged_KEGG_assignment.tsv")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v1.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v1.tsv')),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG")),
@@ -251,7 +258,7 @@ rule step5_integrate_bvbrc_data:
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v3.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v3.tsv')),
         data_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database", "BV-BRC")),
-        gtdb_assignment = ancient(os.path.join(DATA_PATH, "taxonomy_assignment_by_GTDB_tk", "merged_BVBRC_assignment.tsv")),
+        gtdb_assignment = ancient(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk", "merged_BVBRC_assignment.tsv")),
         synonymizer_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data")),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     params:
@@ -313,26 +320,7 @@ rule step7_prepare_neo4j_inputs:
     params:
         output_dir = os.path.join(ROOT_PATH, "neo4j", "input_files")
     output:
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes_header.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges_header.tsv'),
         os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv'),
         os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv')
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --kg_dir {input.kg_dir} --output_dir {params.output_dir}")
-
-# Import KG into Neo4j
-rule step8_import_kg_into_neo4j:
-    input:
-        script = ancient(os.path.join(SCRIPT_PATH, "neo4j_utils", "tsv_to_neo4j.sh")),
-        nodes_header = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes_header.tsv')),
-        edges_header = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges_header.tsv')),
-        nodes = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv')),
-        edges = ancient(os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv'))
-    params:
-        tsv_dir = os.path.join(ROOT_PATH, "neo4j", "input_files"),
-        dbname = neo4j_dbname.lower(),
-        neo4j_config = os.path.join(ROOT_PATH, "neo4j", f"neo4j-community-{neo4j_version}", "conf", "neo4j.conf")
-    output:
-        touch(os.path.join(ROOT_PATH, "neo4j", "import_to_neo4j_done.txt"))
-    run:
-        shell("bash {input.script} {params.dbname} {params.neo4j_config} {params.tsv_dir}")
