@@ -62,12 +62,12 @@ if __name__ == "__main__":
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     
-    logger.info("Writing headers to a TSV file...")
-    with open(os.path.join(args.output_dir, 'nodes_header.tsv'), 'w') as f:
-        f.write('\t'.join(node_headers)+'\n')
+    # logger.info("Writing headers to a TSV file...")
+    # with open(os.path.join(args.output_dir, 'nodes_header.tsv'), 'w') as f:
+    #     f.write('\t'.join(node_headers)+'\n')
 
-    with open(os.path.join(args.output_dir, 'edges_header.tsv'), 'w') as f:
-        f.write('\t'.join(edge_headers)+'\n')
+    # with open(os.path.join(args.output_dir, 'edges_header.tsv'), 'w') as f:
+    #     f.write('\t'.join(edge_headers)+'\n')
 
     # Format nodes for neo4j
     logger.info("Formatting nodes for neo4j...")
@@ -86,6 +86,7 @@ if __name__ == "__main__":
     
     ## Save KG nodes with neo4j format
     logger.info("Saving KG nodes with neo4j format...")
+    kg_node_df.columns = node_headers
     kg_node_df.to_csv(os.path.join(args.output_dir, 'nodes.tsv'), sep='\t', index=None, header=False)
     
     # Format edges for neo4j
@@ -99,4 +100,5 @@ if __name__ == "__main__":
     
     ## Save KG edges with neo4j format
     logger.info("Saving KG edges with neo4j format...")
+    kg_edge_df.columns = edge_headers
     kg_edge_df.to_csv(os.path.join(args.output_dir, 'edges.tsv'), sep='\t', index=None, header=False)
