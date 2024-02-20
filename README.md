@@ -109,7 +109,7 @@ Since we utilize the Unified Medical Language System (UMLS) search function via 
 MetagenomicKG includes KEGG data downloaded from KEGG FTP. According to KEGG policy, we can provide this dataset. To obtain this dataset, you can follow [this instruction](https://www.kegg.jp/kegg/download/). Once you download data, you should replace the path of `KEGG_FTP_DATA_DIR` key in the `config.yaml` file.
 
 ## Build MetagenomicKG
-We constructed an automatic pipeline to rebuild MetagenomicKG via [Snakemake](https://snakemake.readthedocs.io/en/stable). Since MetagenomicKG uses [RTX-KG2](https://github.com/RTXteam/RTX-KG2), which includes UMLS data, you need to contact authors in order to demonstrate that you have accepted [the license terms](https://www.nlm.nih.gov/databases/umls.html) in order to get access to download KG2. Once you have access, please download it to `./data/RTX_KG2` folder.
+We constructed an automatic pipeline to rebuild MetagenomicKG via [Snakemake](https://snakemake.readthedocs.io/en/stable). Since MetagenomicKG uses [RTX-KG2](https://github.com/RTXteam/RTX-KG2), which includes UMLS data, you need to contact authors to demonstrate that you have accepted [the license terms](https://www.nlm.nih.gov/databases/umls.html) in order to get access to download KG2. Once you have access, please download and put the `kg2c-tsv.tar.gz` file to `./data/RTX_KG2` folder.
 
 After downloading the RTX-KG2 TSV files is done, you can run the pipeline via:
 ```bash
