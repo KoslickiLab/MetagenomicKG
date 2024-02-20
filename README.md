@@ -90,7 +90,7 @@ git clone https://github.com/KoslickiLab/MetagenomicKG.git
 cd MetagenomicKG
 
 # Create a new virtual environment named 'metagenomickg_env'
-conda env create -f env/metagenomickg_env.yml
+conda env create -f envs/metagenomickg_env.yml
 
 # Activate the newly created environment
 conda activate metagenomickg_env
