@@ -19,16 +19,12 @@ dependencies:
   - treelib=1.6.4
   - pytaxonkit=0.8
   - biopython=1.79
-  - ncbi-amrfinderplus
-  - ncbi-datasets-cli
-  - ncbi-genome-download
-  - gtdbtk=2.3.2
   - openjdk
   - sourmash
   - yacht
   - pip
   - pip:
       - tqdm
-      - distinctipy==1.3.4
+      - distinctipy
       - matplotlib
       - seaborn
