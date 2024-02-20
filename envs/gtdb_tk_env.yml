@@ -1,0 +1,5 @@
+name: gtdb_tk_env
+channels:
+  - conda-forge
+  - defaults
+  - bioconda

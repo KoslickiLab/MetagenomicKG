@@ -1,0 +1,5 @@
+name: amrfinderplus_env
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
