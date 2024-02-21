@@ -3,3 +3,14 @@ channels:
   - conda-forge
   - defaults
   - bioconda
+dependencies:
+  - ncbi-amrfinderplus
+  - ncbi-datasets-cli
+  - ncbi-genome-download
+  - parallel
+  - pandas
+  - pytaxonkit=0.8
+  - biopython=1.79
+  - pip
+  - pip:
+    - pyyaml
