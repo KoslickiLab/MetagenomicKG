@@ -12,7 +12,8 @@ import argparse
 import logging
 
 ## Import custom libraries
-from ..utils import get_logger, KnowledgeGraph
+sys.path.append(f'{os.path.dirname(os.path.realpath(__file__))}/..')
+from utils import get_logger, KnowledgeGraph
 
 
 if __name__ == "__main__":

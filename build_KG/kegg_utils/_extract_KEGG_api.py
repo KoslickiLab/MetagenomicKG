@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 
 ## Import custom libraries
-from ..utils import get_logger
+from kegg_utils import get_logger
 
 
 class GetKeggLinkData(object):

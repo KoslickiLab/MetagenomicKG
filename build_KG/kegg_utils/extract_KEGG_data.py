@@ -18,8 +18,8 @@ import logging
 Entrez.email = "test@example.com"
 
 ## Import custom libraries
-from ..utils import get_logger
-from kegg_utils import GetKeggLinkData
+from kegg_utils import get_logger
+from kegg_utils._extract_KEGG_api import GetKeggLinkData
 
 class KEGGData:
     def __init__(self, kegg_data_dir: str, output_dir: str):
