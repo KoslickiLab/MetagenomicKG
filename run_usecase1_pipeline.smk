@@ -5,7 +5,7 @@ Usage:
     snakemake --cores 16 -s run_usecase1_pipeline.smk targets
 """
 ## Import Config Files
-configfile: "./config.yaml"
+configfile: "./config.yml"
 
 ## Import Python standard libraries
 import os, sys
