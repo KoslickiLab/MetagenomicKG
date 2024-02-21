@@ -89,8 +89,15 @@ To create your Conda environment, follow these steps:
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
 cd MetagenomicKG
 
-# Create a new virtual environment named 'metagenomickg_env'
+# Create a new virtual environment named 'README.md'
 conda env create -f envs/metagenomickg_env.yml
+
+# Download required files for the package 'pytaxonkit'
+wget -c ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz
+tar -zxvf taxdump.tar.gz
+
+mkdir -p $HOME/.taxonkit
+cp names.dmp nodes.dmp delnodes.dmp merged.dmp $HOME/.taxonkit
 
 # Activate the newly created environment
 conda activate metagenomickg_env
