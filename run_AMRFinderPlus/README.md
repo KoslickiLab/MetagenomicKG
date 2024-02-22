@@ -39,7 +39,7 @@ python combine.py
 ```
 
 ## Predict AMR of Genome Assemblies used in GTDB
-We first downloaded a list of 394,932 bacteria genome IDs and 7,777 archaea genome IDs based on the latest version of GTDB taxonomy (rs214) from its database FTP. Then according to their GenBank/Refseq ids, we also utilized NCBI datasets CLI tool to obtrain the corresponding genome sequences, and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
+We first downloaded a list of 394,932 bacteria genome IDs and 7,777 archaea genome IDs based on the latest version of GTDB taxonomy (rs214) from its database FTP server. Then according to their GenBank/Refseq ids, we also utilized NCBI datasets CLI tool to obtrain the corresponding genome sequences, and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
 ```bash
 cd ./GTDB
 
@@ -57,3 +57,18 @@ python combine.py
 ```
 
 ## Predict AMR of Genome Assemblies used in BVBRC
+We first downloaded all genome content (including .fna, .gff, .faa) from BVBRC database FTP server. Then we ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
+```bash
+cd ./BVBRC
+
+## Download genomes from BVBRC
+wget ftp://ftp.bvbrc.org/RELEASE_NOTES/genome_summary
+cat genome_summary | sed '1d' | cut -f 1 > genome_id_list.tsv
+cat genome_id_list.tsv | parallel -j 32 wget -r -nH -np -N ftp://ftp.bvbrc.org/genomes/{}/
+
+## download genomes and run AMRFinderPlus
+nohup bash run.sh 32 &
+
+## combine all prediction results
+python combine.py
+```
