@@ -23,9 +23,11 @@ amrfinder -u
 ```
 
 ## Predict AMR of Microbe Assemblies used in KEGG
-KEGG database uses the genome assemblies from GenBank and Refseq. To predict AMR of those genome assemblies, the commands below first extract the mapping between KEGG genome ids and GenBank/Refseq ids. According to GenBank/Refseq ids, we utilize [NCBI datasets CLI tool](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/command-line/datasets/) to download the corresponding genome sequences. Then, we ran AMRFinderPlus to predict AMR based on the downloaded genome sequences.
+KEGG database uses the genome assemblies from GenBank and Refseq. To predict AMR of those genome assemblies, the commands below first extract the mapping between KEGG genome ids and GenBank/Refseq ids. According to GenBank/Refseq ids, we utilized [NCBI datasets CLI tool](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/command-line/datasets/) to download the corresponding genome sequences. Then, we ran AMRFinderPlus to predict AMR based on the downloaded genome sequences.
 
 ```bash
+cd ./KEGG
+
 ## extract mapping between KEGG genome ids and GenBank/Refseq ids.
 python ./get_KEGG_microbe_assemby_mapping.py
 
@@ -37,7 +39,10 @@ python combine.py
 ```
 
 ## Predict AMR of Genome Assemblies used in GTDB
+We first downloaded a list of 394,932 bacteria genome IDs and 7,777 archaea genome IDs based on the latest version of GTDB taxonomy (rs214) from its database FTP. Then according to their GenBank/Refseq ids, we also utilized NCBI datasets CLI tool to obtrain the corresponding genome sequences, and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
 ```bash
+cd ./GTDB
+
 ## download bacteria and archaea genome list from GTDB website
 wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/bac120_taxonomy_r214.tsv
 wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/ar53_taxonomy_r214.tsv
