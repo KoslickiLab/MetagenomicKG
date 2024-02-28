@@ -61,7 +61,7 @@ if __name__ == "__main__":
     temp_file = read_tsv_file(args.amr_metadata)
     amrfinderplus_metadata = pd.DataFrame(temp_file[1:], columns=temp_file[0])
     amrfinderplus_metadata = amrfinderplus_metadata[['gene_family','product_name','subtype','subclass','refseq_protein_accession','genbank_protein_accession']]
-    amrfinderplus_metadata = amrfinderplus_metadata.loc[(amrfinderplus_metadata['refseq_protein_accession'] != '') & (amrfinderplus_metadata['genbank_protein_accession'] != ''),:].reset_index(drop=True)
+    amrfinderplus_metadata = amrfinderplus_metadata.loc[(amrfinderplus_metadata['refseq_protein_accession'] != '') | (amrfinderplus_metadata['genbank_protein_accession'] != ''),:].reset_index(drop=True)
     amrfinderplus_metadata = amrfinderplus_metadata.drop_duplicates().reset_index(drop=True)
     # merge duplicated info
     amr_dict = {}
