@@ -1,4 +1,5 @@
 import pandas as pd
+from tqdm import tqdm
 
 # Read mapping file
 mapping_file = 'KEGG_microbe_assembly_mapping.tsv'
@@ -13,7 +14,7 @@ filtered_accessions = mapping.loc[mapping['assembly_id'].isin(accession_file[0].
 
 # combine AMR results
 combined_df = []
-for row in filtered_accessions.to_numpy():
+for row in tqdm(filtered_accessions.to_numpy()):
     gn_id, assembly_id = row
     temp_df = pd.read_csv(f'seqs/{assembly_id}/amrfinder_results.txt', sep='\t', header=0)
     temp_df['genome_id'] = gn_id

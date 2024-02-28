@@ -1,4 +1,5 @@
 import pandas as pd
+from tqdm import tqdm
 
 # Read accession file with sccessful runs
 accession_file = 'finished_accession_list.txt'
@@ -6,7 +7,7 @@ accession_file = pd.read_csv(accession_file, sep='\t', header=None)
 
 # combine AMR results
 combined_df = []
-for assembly_id in accession_file[0].to_list():
+for assembly_id in tqdm(accession_file[0].to_list()):
     temp_df = pd.read_csv(f'seqs/{assembly_id}/amrfinder_results.txt', sep='\t', header=0)
     temp_df['genome_id'] = assembly_id
     temp_df['source'] = 'GTDB'
