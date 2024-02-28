@@ -148,7 +148,7 @@ rule targets:
         os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v5.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')
+        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv'),
         os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv'),
         os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv')
 
@@ -175,7 +175,7 @@ rule step1_process_kegg_data:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "kegg_utils", "extract_KEGG_data.py")),
         kegg_data_dir = ancient(config['BUILD_KG_VARIABLES']['KEGG_FTP_DATA_DIR']),
-        output_dir = ancient(os.path.join(DATA_PATH, "KEGG"))
+        output_dir = ancient(os.path.join(DATA_PATH, "KEGG_data"))
     params:
         microb_only = True
     output:
