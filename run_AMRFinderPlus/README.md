@@ -72,3 +72,27 @@ nohup bash run.sh 32 &
 ## combine all prediction results
 python combine.py
 ```
+
+## Predict AMR of Viruses and fungi in NCBI
+We first extracted the NCBI taxonomy of viruses and fungi which has been implemented by step0 in the [build-KG pipeline](https://github.com/KoslickiLab/MetagenomicKG/blob/master/run_buildKG_pipeline.smk).After that we downloaded the corresponding genomes from NCBI and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
+```bash
+cd ./NCBI
+
+## predict AMR for viruses
+cd viruses
+ln -s ../../../data/Micobial_hierarchy/viruses_hierarchy.tsv
+## download genomes and run AMRFinderPlus
+nohup bash run.sh 32 &
+
+## predict AMR for fungi
+cd fungi
+ln -s ../../../data/Micobial_hierarchy/fungi_hierarchy.tsv
+## download genomes and run AMRFinderPlus
+nohup bash run.sh 32 &
+```
+
+## Download Pathogen Detection Reference Gene Catalog
+We used the command below to download the reference gene catalog list used by AMRFinderPlus.
+```bash
+wget https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/Data/latest/ReferenceGeneCatalog.txt
+```
