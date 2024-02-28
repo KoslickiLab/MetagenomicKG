@@ -9,6 +9,7 @@ dependencies:
   - ncbi-genome-download
   - parallel
   - pandas
+  - tqdm
   - pytaxonkit=0.8
   - biopython=1.79
   - pip
