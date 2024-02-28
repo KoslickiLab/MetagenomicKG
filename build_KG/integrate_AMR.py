@@ -47,19 +47,21 @@ if __name__ == "__main__":
         logger.error(f'Could not find AMR result file at {args.amr_result}')
         sys.exit(1)
     else:
-        amr_result = pd.read_csv(args.amr_result, sep='\t', header=0)
+        temp_file = read_tsv_file(args.amr_result)
+        amr_result = pd.DataFrame(temp_file[1:], columns=temp_file[0])
     # remove rows with no aligned sequence
-    amr_result = amr_result.loc[~amr_result['Accession of closest sequence'].isna(),:].reset_index(drop=True)
+    amr_result = amr_result.loc[amr_result['Accession of closest sequence'] != '',:].reset_index(drop=True)
     # filter rows with coverage and identity
-    amr_result = amr_result.loc[(amr_result['% Coverage of reference sequence'] >= args.coverage_threshold) & (amr_result['% Identity to reference sequence'] >= args.identity_threshold),:].reset_index(drop=True)
+    amr_result = amr_result.loc[(amr_result['% Coverage of reference sequence'].astype(float) >= args.coverage_threshold) & (amr_result['% Identity to reference sequence'].astype(float) >= args.identity_threshold),:].reset_index(drop=True)
     # get ncbi id to name mapping
     result = pytaxonkit.lineage(list(set(amr_result.query('source == "NCBI"')['genome_id'])))
     ncbi_id_to_name = {str(taxid):name for taxid, name in result[['TaxID','Name']].to_numpy()}
 
     # Load AMR metadata
-    amrfinderplus_metadata = pd.read_csv(args.amr_metadata, sep='\t', header=0)
+    temp_file = read_tsv_file(args.amr_metadata)
+    amrfinderplus_metadata = pd.DataFrame(temp_file[1:], columns=temp_file[0])
     amrfinderplus_metadata = amrfinderplus_metadata[['gene_family','product_name','subtype','subclass','refseq_protein_accession','genbank_protein_accession']]
-    amrfinderplus_metadata = amrfinderplus_metadata.loc[~(amrfinderplus_metadata['refseq_protein_accession'].isna() & amrfinderplus_metadata['genbank_protein_accession'].isna()),:].reset_index(drop=True)
+    amrfinderplus_metadata = amrfinderplus_metadata.loc[(amrfinderplus_metadata['refseq_protein_accession'] != '') & (amrfinderplus_metadata['genbank_protein_accession'] != ''),:].reset_index(drop=True)
     amrfinderplus_metadata = amrfinderplus_metadata.drop_duplicates().reset_index(drop=True)
     # merge duplicated info
     amr_dict = {}
@@ -197,12 +199,12 @@ if __name__ == "__main__":
             if not genome_node_id:
                 logger.debug(f'Skip {temp_genome_id} because it does not exist in GTDB anymore. Please double check the genome id.')
                 continue
-        elif source == 'NCBI':
+        elif temp_source == 'NCBI':
             for temp_genome_synonym in [f"NCBI:{temp_genome_id}", f"KEGG:gn_{temp_genome_id}", f"NCBI:{ncbi_id_to_name[temp_genome_id]}"]:
                 genome_node_id = kg.find_node_by_synonym(f"{temp_genome_synonym}")
                 if genome_node_id:
                     break
-        elif source == 'PATRIC':
+        elif temp_source == 'PATRIC':
             genome_node_id = kg.find_node_by_synonym(f"BVBRC:gn_{temp_genome_id}")
             if not genome_node_id:
                 logger.debug(f'Skip {temp_genome_id} because it may not be included in KG due to the lack of disease relationship')

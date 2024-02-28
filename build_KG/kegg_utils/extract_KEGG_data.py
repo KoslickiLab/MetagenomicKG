@@ -18,7 +18,8 @@ import logging
 Entrez.email = "test@example.com"
 
 ## Import custom libraries
-from kegg_utils import get_logger
+sys.path.append(f'{os.path.dirname(os.path.realpath(__file__))}/..')
+from utils import get_logger
 from kegg_utils._extract_KEGG_api import GetKeggLinkData
 
 class KEGGData:
@@ -373,10 +374,8 @@ class KEGGData:
         """
         # Get the input file path
         gene_path = os.path.join(self.kegg_data_dir, "genes")
-        in_path = glob(os.path.join(gene_path, "organisms", org_code, "*.ent.gz"))[0]
-        if not os.path.exists(in_path):
-            self.logger.warning(f"File {in_path} does not exist!")
-        else:
+        try:
+            in_path = glob(os.path.join(gene_path, "organisms", org_code, "*.ent.gz"))[0]
             # Read data
             with gzip.open(in_path, 'rb') as f:
                 text = f.read()
@@ -392,6 +391,9 @@ class KEGGData:
             with open(out_path, 'w') as f:
                 f.write(header)
                 f.write('\n'.join(out_res))
+        except:
+            temp_path = os.path.join(gene_path, "organisms", org_code)
+            self.logger.warning(f"Folder {temp_path} does not exist!")
 
     def extract_organism_gene_link_info(self, org_code: str):
         """

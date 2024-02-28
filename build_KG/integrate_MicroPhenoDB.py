@@ -17,6 +17,7 @@ import itertools
 
 ## Import custom libraries
 from utils import get_logger, read_tsv_file, Node, Edge, KnowledgeGraph, change_prefix, extract_disease_synonyms, UMLSMapping, OxOMapping, MappingLink
+from kg2_utils.node_synonymizer import NodeSynonymizer
 
 def map_umls_to_taxon_id(ncit, umls_id, apikey):
     
@@ -102,8 +103,6 @@ if __name__ == "__main__":
     edge_filename = args.existing_KG_edges.split('/')[-1]
     kg.load_graph(load_dir=args.output_dir, node_filename=node_filename, edge_filename=edge_filename)
     # Import Node Synonymizer
-    sys.path.append(args.synonymizer_dir)
-    from node_synonymizer import NodeSynonymizer
     nodesynonymizer = NodeSynonymizer(args.synonymizer_dir, args.synonymizer_dbname)
 
     # set up oxo mappingf

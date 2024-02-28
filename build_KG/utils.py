@@ -496,7 +496,10 @@ class OxOMapping:
         self.data['distance'] = distance
         if isinstance(mappingTarget, list):
             self.data['mappingTarget'] = mappingTarget
-        response = requests.post(self.oxo_api, data=json.dumps(self.data), headers=self.headers)
+        try:
+            response = requests.post(self.oxo_api, data=json.dumps(self.data), headers=self.headers)
+        except:
+            return None
         if response.status_code == 200:
             return self._parse_response(response.json(), output_only)
         else:

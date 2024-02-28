@@ -120,6 +120,9 @@ if __name__ == "__main__":
     for row in tqdm(microbe_gn_table.to_numpy(), desc='integrating info of KEGG genomes'):
         gn_id, org_code, desc, taxon_id, keywords, kegg_lineage, assembly_id, sequence_ids, ncbi_full_lineage_taxids, ncbi_full_lineage, ncbi_rank  = row
         
+        taxon_id = taxon_id if isinstance(taxon_id, int) or isinstance(taxon_id, str) else ''
+        ncbi_rank = ncbi_rank if isinstance(ncbi_rank, str) else ''
+        
         if org_code != '':
             orgcode_to_gnid[org_code] = f"KEGG:gn_{gn_id}"
             
@@ -135,7 +138,7 @@ if __name__ == "__main__":
             if node_id:
                 ## kg has this node
                 existing_node = kg.get_node_by_id(node_id)
-                temp_all_names = [desc, ncbi_full_lineage.split(';')[-1]]
+                temp_all_names = [x for x in [desc, ncbi_full_lineage.split(';')[-1] if isinstance(ncbi_full_lineage, str) else ''] if isinstance(x, str) and x != '']
                 existing_node.all_names = list(set(existing_node.all_names + temp_all_names))
                 description_dict = dict(existing_node.description)
                 if 'taxid' in description_dict and description_dict['taxid'] == '':
@@ -163,7 +166,7 @@ if __name__ == "__main__":
                     gtdb_assigned_id, gtdb_classification, gtdb_assignment_info = mapping_gn_to_microbe_id[f"KEGG:gn_{gn_id}"]
                 
                 ## kg does not have this node
-                temp_all_names = [desc, ncbi_full_lineage.split(';')[-1]]
+                temp_all_names = [x for x in [desc, ncbi_full_lineage.split(';')[-1] if isinstance(ncbi_full_lineage, str) else ''] if isinstance(x, str) and x != '']
                 temp_description_dict = {'taxid': taxon_id, 'rank': ncbi_rank}
                 temp_knowledge_source = ['KEGG']
                 temp_synonyms = [f"KEGG:gn_{gn_id}"]
@@ -178,7 +181,10 @@ if __name__ == "__main__":
                     parent_dict[f"KEGG:gn_{gn_id}"] = f"GTDB:{[x for x in gtdb_classification.split(';')[::-1] if x.split('__')[1] != ''][0].split('__')[1]}"
         else:
             ## This genome might be a vrirus or a fungi or without a assembly_id
-            ncbi_synonym = f"NCBI:{ncbi_full_lineage.split(';')[-1]}"
+            try:
+                ncbi_synonym = f"NCBI:{ncbi_full_lineage.split(';')[-1]}"
+            except:
+                continue
             node_id = kg.find_node_by_synonym(ncbi_synonym)
             if node_id:
                 ## kg has this node
