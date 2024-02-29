@@ -1,31 +1,29 @@
 name: metagenomickg_env
 channels:
-  - conda-forge
-  - defaults
-  - bioconda
+  - dglteam/label/cu121
   - pytorch
   - nvidia
+  - defaults
+  - bioconda
+  - conda-forge
 dependencies:
-  - python=3.9.16
-  - pytorch=2.0.1
-  - dgl=1.1.2
-  - cudatoolkit=11.8.0
-  - torchmetrics=1.2.1
-  - requests
+  - dgl
+  - python=3.11.8
+  - pytorch
+  - pytorch-cuda=12.1
+  - torchmetrics
   - requests-cache
-  - pandas
   - parallel
   - snakemake==7.25.0
-  - treelib=1.6.4
-  - pytaxonkit=0.8
-  - biopython=1.79
+  - treelib
+  - pytaxonkit
+  - biopython
   - openjdk
   - tqdm
   - sourmash
   - yacht
   - pip
   - pip:
-      - tqdm
       - distinctipy
       - matplotlib
       - seaborn

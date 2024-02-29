@@ -10,8 +10,9 @@ dependencies:
   - parallel
   - pandas
   - tqdm
-  - pytaxonkit=0.8
-  - biopython=1.79
+  - snakemake==7.25.0
+  - pytaxonkit
+  - biopython
   - pip
   - pip:
     - pyyaml
