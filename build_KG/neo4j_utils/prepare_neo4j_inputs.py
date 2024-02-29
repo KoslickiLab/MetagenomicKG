@@ -53,6 +53,7 @@ if __name__ == "__main__":
     node_headers[node_headers.index('is_pathogen')] = node_headers[node_headers.index('is_pathogen')]
     node_headers += [':LABEL']
     
+    kg_edge_df = kg_edge_df.drop(columns=['description'])
     edge_headers = list(kg_edge_df.columns)
     edge_headers[edge_headers.index('source_node')] = edge_headers[edge_headers.index('source_node')]
     edge_headers[edge_headers.index('target_node')] = edge_headers[edge_headers.index('target_node')]
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     ## Save KG nodes with neo4j format
     logger.info("Saving KG nodes with neo4j format...")
     kg_node_df.columns = node_headers
-    kg_node_df.to_csv(os.path.join(args.output_dir, 'nodes.tsv'), sep='\t', index=None, header=False)
+    kg_node_df.to_csv(os.path.join(args.output_dir, 'nodes.tsv'), sep='\t', index=None)
     
     # Format edges for neo4j
     logger.info("Formatting edges for neo4j...")
@@ -102,4 +103,4 @@ if __name__ == "__main__":
     ## Save KG edges with neo4j format
     logger.info("Saving KG edges with neo4j format...")
     kg_edge_df.columns = edge_headers
-    kg_edge_df.to_csv(os.path.join(args.output_dir, 'edges.tsv'), sep='\t', index=None, header=False)
+    kg_edge_df.to_csv(os.path.join(args.output_dir, 'edges.tsv'), sep='\t', index=None)
