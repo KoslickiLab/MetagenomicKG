@@ -149,8 +149,8 @@ rule targets:
         os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv'),
         os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv')
+        os.path.join(DATA_PATH, "neo4j", "input_files", 'nodes.tsv'),
+        os.path.join(DATA_PATH, "neo4j", "input_files", 'edges.tsv')
 
 
 # Get Taxonomy hierarchy for Archeaa and Bacteria from GTDB as well as Fungi and Viruses from NCBI Taxonomy
@@ -315,12 +315,12 @@ rule step7_prepare_neo4j_inputs:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "neo4j_utils", "prepare_neo4j_inputs.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')),
         kg_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     params:
-        output_dir = os.path.join(ROOT_PATH, "neo4j", "input_files")
+        output_dir = os.path.join(DATA_PATH, "neo4j", "input_files")
     output:
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'nodes.tsv'),
-        os.path.join(ROOT_PATH, "neo4j", "input_files", 'edges.tsv')
+        os.path.join(DATA_PATH, "neo4j", "input_files", 'nodes.tsv'),
+        os.path.join(DATA_PATH, "neo4j", "input_files", 'edges.tsv')
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --kg_dir {input.kg_dir} --output_dir {params.output_dir}")
