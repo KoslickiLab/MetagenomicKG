@@ -5,23 +5,20 @@ Usage:
     snakemake --cores 16 -s run_usecase1_pipeline.smk targets
 """
 ## Import Config Files
-configfile: "./config.yml"
+ROOT_PATH = os.getcwd()
+configfile: f"{ROOT_PATH}/config.yml"
 
 ## Import Python standard libraries
 import os, sys
 import subprocess
 
 ## Define Some Global Variables
-CURRENT_PATH = '/scratch/shared_data_new/metagenomics_graph/model_training'
-main_dir = '/scratch/shared_data_new/metagenomics_graph'
-EXPERIMENT_NAME = "pathogen_detection"
-
-ROOT_PATH = os.getcwd()
-DATA_PATH = os.path.join(ROOT_PATH, 'data')
-GNN_PROCESSED_DATA_PATH = os.path.join(DATA_PATH, "usecase1_processed_data", 'GNN'+'_'+EXPERIMENT_NAME)
-GNN_RESULTS_PATH = os.path.join(DATA_PATH, "usecase1_results", 'GNN'+'_'+EXPERIMENT_NAME)
-GNN_SCRIPT_PATH = os.path.join(ROOT_PATH, 'usecase1_pathogen_identification', 'GNN')
 EXPERIMENT_NAME = config['USECASE1_VARIABLES']['EXPERIMENT_NAME']
+DATA_PATH = os.path.join(ROOT_PATH, 'data')
+USECASE1_DATA_PATH = os.path.join(DATA_PATH, 'usecase1')
+GNN_PROCESSED_DATA_PATH = os.path.join(USECASE1_DATA_PATH, "processed_data", 'GNN'+'_'+EXPERIMENT_NAME)
+GNN_RESULTS_PATH = os.path.join(USECASE1_DATA_PATH, "results", 'GNN'+'_'+EXPERIMENT_NAME)
+GNN_SCRIPT_PATH = os.path.join(ROOT_PATH, 'usecase1_pathogen_identification', 'GNN')
 
 ## Create Required Folders
 if not os.path.exists(GNN_PROCESSED_DATA_PATH):
@@ -38,7 +35,7 @@ rule targets:
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "id2index.json"),
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "index2id.json"),
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "embedding_biobert_namecat.pkl"),
-        os.path.join(GNN_RESULTS_PATH, "performance_summary_test.tsv")
+        # os.path.join(GNN_RESULTS_PATH, "performance_summary_test.tsv")
 
 ##############################  GNN Model Training Pipeline  ##############################
 
