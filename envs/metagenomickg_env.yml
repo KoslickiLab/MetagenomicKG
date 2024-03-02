@@ -19,7 +19,9 @@ dependencies:
   - pytaxonkit
   - biopython
   - openjdk
+  - numpy
   - tqdm
+  - transformers
   - sourmash
   - yacht
   - pip
