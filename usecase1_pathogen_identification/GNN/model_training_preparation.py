@@ -201,19 +201,12 @@ def main():
             if 'GTDB:' in synonym:
                 all_gtdb_id_to_microbe_id[synonym] = (synonym, node_id, node_type, all_names, synonyms, is_pathogen)
     gtdbid_df = pd.DataFrame(all_gtdb_id_to_microbe_id.values(), columns=['gtdb_id', 'node_id', 'node_type', 'all_names', 'synonyms', 'is_pathogen'])
-    # gtdbid_df.loc[gtdbid_df['gtdb_id'].isin(all_potential_pathogenic_strain),:].reset_index(drop=True).to_csv(os.path.join(args.output_dir, 'all_potential_pathogenic_strain.tsv'), sep='\t', index=False)
     all_potential_pathogenic_strain_df = gtdbid_df.loc[gtdbid_df['gtdb_id'].isin(all_potential_pathogenic_strain),:].reset_index(drop=True)
     gtdbid_to_nodeid = {row[0]:row[1] for row in gtdbid_df.to_numpy()}
     temp_df = pd.DataFrame(all_potential_pathogenic_strain_df['gtdb_id'].apply(lambda x: (find_parent[x], gtdbid_to_nodeid[x])).to_list())
     temp_df.columns = ['species_parent', 'node_id']
     all_potential_pathogenic_strain_df = pd.concat([all_potential_pathogenic_strain_df, temp_df], axis=1)
     all_potential_pathogenic_strain_df.to_csv(os.path.join(args.output_dir, 'all_potential_pathogenic_strain.tsv'), sep='\t', index=False)
-
-    # randomly hold out 10% of species that have at least one strain-level pathogen
-    species1_list = list(species1)
-    random.shuffle(species1_list)
-    hold_out_species = species1_list[:int(len(species1_list)*0.1)]
-    pathogen_info.loc[pathogen_info['parent_list'].isin(hold_out_species),:].to_csv(os.path.join(args.output_dir, 'hold_out_pathogen_info.tsv'), sep='\t', index=False)
 
     # save edge info
     edge_info.to_csv(os.path.join(args.output_dir, 'edge_info.tsv'), sep='\t', index=False)    
