@@ -1,8 +1,8 @@
 """
-This file is a SnakeMake Script to automate model training for pathogen identification as use case1.
+This file is a SnakeMake Script to automate model training for pathogen identification as use case3.
 
 Usage:
-    snakemake --cores 16 -s run_usecase1_pipeline.smk targets
+    snakemake --cores 16 -s run_usecase3_pipeline.smk targets
 """
 ## Import Config Files
 ROOT_PATH = os.getcwd()
@@ -13,12 +13,12 @@ import os, sys
 import subprocess
 
 ## Define Some Global Variables
-EXPERIMENT_NAME = config['USECASE1_VARIABLES']['EXPERIMENT_NAME']
+EXPERIMENT_NAME = config['USECASE3_VARIABLES']['EXPERIMENT_NAME']
 DATA_PATH = os.path.join(ROOT_PATH, 'data')
-USECASE1_DATA_PATH = os.path.join(DATA_PATH, 'usecase1')
-GNN_PROCESSED_DATA_PATH = os.path.join(USECASE1_DATA_PATH, "processed_data", 'GNN'+'_'+EXPERIMENT_NAME)
-GNN_RESULTS_PATH = os.path.join(USECASE1_DATA_PATH, "results", 'GNN'+'_'+EXPERIMENT_NAME)
-GNN_SCRIPT_PATH = os.path.join(ROOT_PATH, 'usecase1_pathogen_identification', 'GNN')
+USECASE3_DATA_PATH = os.path.join(DATA_PATH, 'usecase3')
+GNN_PROCESSED_DATA_PATH = os.path.join(USECASE3_DATA_PATH, "processed_data", 'GNN'+'_'+EXPERIMENT_NAME)
+GNN_RESULTS_PATH = os.path.join(USECASE3_DATA_PATH, "results", 'GNN'+'_'+EXPERIMENT_NAME)
+GNN_SCRIPT_PATH = os.path.join(ROOT_PATH, 'usecase3_pathogen_identification', 'GNN')
 
 ## Create Required Folders
 if not os.path.exists(GNN_PROCESSED_DATA_PATH):
