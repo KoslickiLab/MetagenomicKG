@@ -18,7 +18,6 @@ dependencies:
   - treelib
   - pytaxonkit
   - biopython
-  - openjdk
   - numpy
   - tqdm
   - transformers
