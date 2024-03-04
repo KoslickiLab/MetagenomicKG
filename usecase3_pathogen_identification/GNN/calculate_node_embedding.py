@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('--gpu', type=int, help='gpu device (default: 0)', default=0)
     parser.add_argument("--use_gpu", action="store_true", help="Whether use GPU or not", default=False)
     parser.add_argument('--random_seed', type=int, default=100, help='random seed (default: 100)')
-    parser.add_argument('--final_embedding_dim', type=int, default=100, help='final embedding dimension (default: 200)')
+    parser.add_argument('--final_embedding_dim', type=int, default=100, help='final embedding dimension (default: 100)')
     parser.add_argument("--batch_size", type=int, help="Batch size of bert embedding calculation", default=50)
     parser.add_argument('--output_dir', type=str, help='path of the output directory')
     args = parser.parse_args()
