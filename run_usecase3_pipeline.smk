@@ -25,6 +25,9 @@ if not os.path.exists(GNN_PROCESSED_DATA_PATH):
     os.makedirs(GNN_PROCESSED_DATA_PATH)
 if not os.path.exists(GNN_RESULTS_PATH):
     os.makedirs(GNN_RESULTS_PATH)
+for index in range(10):
+    if not os.path.exists(f"{GNN_RESULTS_PATH}_fold{index+1}"):
+        os.makedirs(f"{GNN_RESULTS_PATH}_fold{index+1}")
 
 ## Build Rules
 rule targets:
@@ -35,7 +38,7 @@ rule targets:
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "id2index.json"),
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "index2id.json"),
         os.path.join(GNN_PROCESSED_DATA_PATH, "text_embedding", "embedding_biobert_namecat.pkl"),
-        # os.path.join(GNN_RESULTS_PATH, "performance_summary_test.tsv")
+        os.path.join(GNN_RESULTS_PATH, "performance_summary_test.tsv")
 
 ##############################  GNN Model Training Pipeline  ##############################
 
@@ -101,5 +104,43 @@ rule step2_train_model:
             shell("python {input.script} --data_path {input.data_path} --output_dir {input.output_dir} --experiment_name {params.experiment_name} --gpu {params.gpu} --use_gpu --ratio {params.ratio} --cv_num {params.cv_num} --lr {params.lr} --num_neighbors {params.num_neighbors} --num_workers {params.num_workers} --num_epochs {params.num_epochs} --train_batch_size {params.train_batch_size} --eval_batch_size {params.eval_batch_size} --emb_size {params.emb_size} --num_layers {params.num_layers} --early_stop_n {params.early_stop_n}")
         else:
             shell("python {input.script} --data_path {input.data_path} --output_dir {input.output_dir} --experiment_name {params.experiment_name} --gpu {params.gpu} --ratio {params.ratio} --cv_num {params.cv_num} --lr {params.lr} --num_neighbors {params.num_neighbors} --num_workers {params.num_workers} --num_epochs {params.num_epochs} --train_batch_size {params.train_batch_size} --eval_batch_size {params.eval_batch_size} --emb_size {params.emb_size} --num_layers {params.num_layers} --early_stop_n {params.early_stop_n}")
+
+# # Train the model with 10-fold cross-validation
+# rule step3_train_model_10CV:
+#     input:
+#         script = ancient(os.path.join(GNN_SCRIPT_PATH, "run_model.py")),
+#         data_path = ancient(GNN_PROCESSED_DATA_PATH),
+#         output_dir = ancient(GNN_RESULTS_PATH)
+#     params:
+#         experiment_name = EXPERIMENT_NAME,
+#         gpu = 0,
+#         use_gpu = True,
+#         ratio = 1.0,
+#         cv_num = 10,
+#         lr = 0.001,
+#         num_workers = 100,
+#         num_epochs = 500,
+#         train_batch_size = 256,
+#         eval_batch_size = 128,
+#         emb_size = 512,
+#         early_stop_n = 500,
+#         num_layers = 3
+#     output:
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold1", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold2", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold3", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold4", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold5", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold6", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold7", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold8", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold9", "performance_summary_test.tsv"),
+#         os.path.join(f"{GNN_RESULTS_PATH}_fold10", "performance_summary_test.tsv")
+#     run:
+#         for index in range(10):
+#             if params.use_gpu:
+#                 shell(f"python {input.script} --data_path {input.data_path}/random_10cv/{index+1} --output_dir {input.output_dir}_fold{index+1} --experiment_name {params.experiment_name} --gpu {params.gpu} --use_gpu --ratio {params.ratio} --cv_num {params.cv_num} --lr {params.lr} --num_workers {params.num_workers} --num_epochs {params.num_epochs} --train_batch_size {params.train_batch_size} --eval_batch_size {params.eval_batch_size} --emb_size {params.emb_size} --num_layers {params.num_layers} --early_stop_n {params.early_stop_n}")
+#             else:
+#                 shell(f"python {input.script} --data_path {input.data_path}/random_10cv/{index+1} --output_dir {input.output_dir}_fold{index+1} --experiment_name {params.experiment_name} --gpu {params.gpu} --ratio {params.ratio} --cv_num {params.cv_num} --lr {params.lr} --num_workers {params.num_workers} --num_epochs {params.num_epochs} --train_batch_size {params.train_batch_size} --eval_batch_size {params.eval_batch_size} --emb_size {params.emb_size} --num_layers {params.num_layers} --early_stop_n {params.early_stop_n}")
 
 ##############################  Other baseline Model Training Pipeline  ##############################

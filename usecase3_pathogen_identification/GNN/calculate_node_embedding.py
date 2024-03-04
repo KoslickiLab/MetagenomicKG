@@ -11,7 +11,7 @@ import random
 from sklearn.decomposition import PCA
 
 ## Import custom libraries
-from utils import get_logger, read_tsv_file
+from utils import get_logger, read_tsv_file, set_seed
 
 def get_bert_embedding(texts, tokenizer, model, device):
     """
@@ -45,7 +45,7 @@ def main():
     # Create a logger object
     logger = get_logger()
     logger.setLevel(logging.DEBUG)
-    random.seed(args.random_seed)
+    set_seed(args.random_seed)
 
     # Load node information
     logger.info("Loading node information...")
