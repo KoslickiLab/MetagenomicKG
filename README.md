@@ -85,7 +85,7 @@ We recommend using a virtual environment to ensure a clean and isolated workspac
 To create your Conda environment, follow these steps:
 
 ```bash
-# Clone the YACHT repository
+# Clone the MetagenomicKG repository
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
 cd MetagenomicKG
 
