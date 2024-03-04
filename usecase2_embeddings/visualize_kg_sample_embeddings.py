@@ -53,7 +53,7 @@ if __name__ == "__main__":
     # Loop through each samples
     for sample in tqdm(embeddings.columns[1:]):
         # Sort the DataFrame based on the current column in descending order and take the top values
-        top_values = embeddings[['node_id', sample]].sort_values(by=sample, ascending=False).head(1000)
+        top_values = embeddings[['node_id', sample]].sort_values(by=sample, ascending=False).head(args.top_values)
         # Append to the list
         top_dfs.append(top_values)
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     plot_data_combined = [plot_data_X1, plot_data_X2]
 
     # Titles for each subplot
-    titles = ['tSNE cluster based on raw aundance', 'tSNE cluster based on sample-specific embeddings']
+    titles = ['tSNE result based on raw aundance vectors', 'tSNE result based on sample-specific embeddings']
 
     for ax, plot_data, title in zip(axs, plot_data_combined, titles):
         # Loop through each body site in the current plot_data
@@ -97,9 +97,9 @@ if __name__ == "__main__":
             ax.scatter(subset['tsne_dim1'], subset['tsne_dim2'], label=body_site)
         
         # Set title, labels and legend for each subplot
-        ax.set_title(title, fontsize=20)
-        ax.set_xlabel('t-SNE Dimension 1', fontsize=15)
-        ax.set_ylabel('t-SNE Dimension 2', fontsize=15)
+        ax.set_title(title, fontsize=23)
+        ax.set_xlabel('t-SNE Dimension 1', fontsize=18)
+        ax.set_ylabel('t-SNE Dimension 2', fontsize=18)
         ax.legend(title='Body Site')
 
     # Adjust layout to prevent overlap

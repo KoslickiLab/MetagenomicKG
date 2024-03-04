@@ -55,7 +55,7 @@ rule visualize_kg_sample_embeddings:
         embeddings = os.path.join(USECASE2_RESULTS_PATH, "sample_embeddings.csv"),
         output_dir = ancient(USECASE2_RESULTS_PATH)
     params:
-        top_values = 2500
+        top_values = 1000
     output:
         os.path.join(USECASE2_RESULTS_PATH, "tSNE_results.png")
     run:
