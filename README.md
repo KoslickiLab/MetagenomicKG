@@ -89,7 +89,6 @@ To create your Conda environment, follow these steps:
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
 cd MetagenomicKG
 
-# Create a new virtual environment named 'README.md'
 # Please note that the versioin of pytorch we used might not be compatible with your nvidia cuda version. So, please first check your version and change it in metagenomickg_env.yml if needed.
 conda env create -f envs/metagenomickg_env.yml
 
