@@ -1,6 +1,9 @@
 # MetagenomicKG
 MetagenomicKG is a novel metagenomics knowledge graph which integrates the commonly-used taxonomic information and other biomedical knowledge.
 
+![figure1](https://github.com/KoslickiLab/MetagenomicKG/assets/20031672/22c538a3-7d27-4e79-b07a-35b721314afa)
+
+
 ## Table of contents
 
 - [Metagenomic](#metagenomickg)
@@ -15,68 +18,67 @@ MetagenomicKG is a novel metagenomics knowledge graph which integrates the commo
   * [Use Case1 Pathogen Identification](#use-case1-pathogen-identification)
   
 ## About Graph
-MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 13 node types and 35 edge types (see statistics in the table below).
+MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 14 node types and 33 edge types (see statistics in the table below).
 
-We have provided the pre-built version of MetagenomicKG, you can download it from [here](). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
+We have provided the pre-built version of MetagenomicKG, you can download it from [here](https://pennstateoffice365-my.sharepoint.com/:u:/g/personal/cqm5886_psu_edu/EcJBYxxMpvpFsYcWY1ApUaoB2tM11wRHQnZVx1cQpjYY9w?e=qfcYNy). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
 
 __Node Statistics__
-| **Node Type**             | **Node Count** |
-|---------------------------|----------------|
-|          Compound         |      19,217    |
-|           Disease         |     103,719    |
-|            Drug           |      12,004    |
-|         Drug Group        |      2,429     |
-|           Enzyme          |      8,056     |
-|           Glycan          |      11,218    |
-|             KO            |      25,745    |
-|           Microbe         |     828,660    |
-|           Module          |       475      |
-|           Network         |      1,417     |
-|           Pathway         |       562      |
-|     Phenotypic Feature    |     106,754    |
-|          Reaction         |      15,130    |
-|                           | 1,135,386      |
+| **Node Type**      | **Node Count** |
+|--------------------|:--------------:|
+| Microbe            |     95,2191    |
+| Disease            |     10,3129    |
+| Phenotypic Feature |     88,708     |
+| KO                 |     26,588     |
+| Compound           |     19,265     |
+| Reaction           |     15,208     |
+| Drug               |     12,347     |
+| Glycan             |     11,225     |
+| Enzyme             |      8,109     |
+| AMR                |      5,147     |
+| Drug Group         |      2,458     |
+| Network            |      1,525     |
+| Pathway            |       569      |
+| Module             |       481      |
+|                    |    1,246,950   |
 
 
 __Edge Statistics__
-| **Edge Type**                  | **Edge Count** |
-|--------------------------------|----------------|
-| associated with                |      4,494,926 |
-| has part                       |       867,991  |
-| part of                        |       854,022  |
-| physically interacts with      |       443,666  |
-| has participant                |       190,447  |
-| participates in                |     187,536    |
-| subclass of                    |       169,125  |
-| related to                     | 96,210         |
-| genetically associated with    | 62,096         |
-| chemically similar to          | 53,800         |
-| biomarker for                  | 44,143         |
-| has phenotype                  | 28,875         |
-| treats                         | 20,369         |
-| interacts with                 | 19,768         |
-| close match                    | 17,239         |
-| catalyzes                      | 8,752          |
-| contraindicated for            | 5,173          |
-| same as                        | 3,891          |
-| is sequence variant of         | 1,918          |
-| gene product of                | 1,918          |
-| correlated with                | 1,590          |
-| contributes to                 | 238            |
-| temporally related to          | 229            |
-| causes                         | 202            |
-| affects                        | 119            |
-| has input                      | 81             |
-| regulates                      | 40             |
-| produces                       | 27             |
-| actively involved in           | 25             |
-| has metabolite                 | 23             |
-| gene associated with condition | 12             |
-| located in                     | 1              |
-| derives from                   | 1              |
-| disease has basis in           | 1              |
-| disrupts                       | 1              |
-|                                |                |
+| **Edge Type**                            | **Edge Count** |
+|------------------------------------------|:--------------:|
+| genetically associated with              |   42,134,426   |
+| associated with                          |   10,802,017   |
+| subclass of                              |    1,141,279   |
+| superclass of                            |     981,435    |
+| physically interacts with                |     458,541    |
+| has participant                          |     192,830    |
+| participates in                          |     189,781    |
+| related to                               |     95,286     |
+| chemically similar to                    |     56,055     |
+| biomarker for                            |     47,698     |
+| has phenotype                            |     30,291     |
+| treats                                   |     21,049     |
+| close match                              |     17,389     |
+| has part                                 |     13,981     |
+| catalyzes                                |      8,819     |
+| contraindicated for                      |      5,158     |
+| same as                                  |      3,887     |
+| is sequence variant of                   |      2,026     |
+| gene product of                          |      2,026     |
+| correlated with                          |      1,619     |
+| contributes to                           |       286      |
+| temporally related to                    |       252      |
+| affects                                  |       176      |
+| causes                                   |       171      |
+| has input                                |       82       |
+| produces                                 |       27       |
+| has metabolite                           |       23       |
+| actively involved in                     |       21       |
+| gene associated with condition           |        9       |
+| disrupts                                 |        4       |
+| derives from                             |        1       |
+| disease has basis in                     |        1       |
+| located in                               |        1       |
+|                                          |   56,206,647   |
 
 ## Virtual Environment Installation
 We recommend using a virtual environment to ensure a clean and isolated workspace for reproducibility. This can be accomplished using either [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) or [Mamba](https://github.com/mamba-org/mamba) (a faster alternative to Conda).
@@ -125,10 +127,16 @@ snakemake --cores 16 -s run_buildKG_pipeline.smk targets
 
 Once it is completed, you can find merged node and edge TSV files (`KG_nodes_v6.tsv` and `KG_edges_v6.tsv`) from `./data/merged_KG` folder.
 
-## Use Case1 Pathogen Identification
-To replicate the results of use case 1, you can simply run the Snakemake pipelie via:
+## Replicate Use Case2 Sample-specific Graph Embeddings
+To replicate the results of use case 2, you can simply run the Snakemake pipelie via:
 ```bash
-snakemake --cores 16 -s run_usecase1_pipeline.smk targets
+snakemake --cores 16 -s run_usecase2_pipeline.smk targets
+```
+
+## Replicate Use Case3 Pathogen Prediction
+To replicate the results of use case 3, you can simply run the Snakemake pipelie via:
+```bash
+snakemake --cores 16 -s run_usecase3_pipeline.smk targets
 ``` 
 
 ## Contact
