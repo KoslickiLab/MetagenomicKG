@@ -52,14 +52,14 @@ if not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"bac120_taxonomy_r{G
             if cur_file.endswith('.tar.gz'):
                 result = subprocess.run(["tar", "-xvzf", destination_path, '-C', os.path.join(DATA_PATH, "GTDB_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if result.returncode == 0:
-                    print("File downloaded and extracted successfully!")
+                    print(f"File {destination_path} downloaded and extracted successfully!")
                 else:
-                    print("Error extracting file.")
+                    print(f"Error extracting file {destination_path}.")
             else:
-                print("File downloaded successfully!")
-            print("File downloaded successfully!")
+                print(f"File {destination_path} downloaded successfully!") 
+            print(f"File {destination_path} downloaded successfully!")
         else:
-            print("Error downloading file.")
+            print(f"Error downloading file {destination_path}.")
 
 ## Download RTX-KG2 data
 if not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2", "kg2c-tsv.tar.gz")):
@@ -71,51 +71,67 @@ else:
         not os.path.exists(os.path.join(DATA_PATH, "RTX_KG2", "edges_c.tsv")):
         result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "RTX_KG2", "kg2c-tsv.tar.gz"), '-C', os.path.join(DATA_PATH, "RTX_KG2")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
-            print("File extracted successfully!")
+            print(f"File {os.path.join(DATA_PATH, 'RTX_KG2', 'kg2c-tsv.tar.gz')} extracted successfully!") 
         else:
-            print("Error extracting file.")
+            print(f"Error extracting file {os.path.join(DATA_PATH, 'RTX_KG2', 'kg2c-tsv.tar.gz')}.")
 
 ## Check required files from Zenodo and download if not present
 # Download NodeSynonymizer database
 if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", node_synonymizer_dbname)):
     # add code to download the file from Zenodo
-    pass
+    result = subprocess.run(["curl", "--cookie", "zenodo-cookies.txt", "https://zenodo.org/record/10806617/files/node_synonymizer_v1.0_KG2.8.4.sqlite?download=1", "--output", os.path.join(DATA_PATH, "Zenodo_data", node_synonymizer_dbname)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"File {node_synonymizer_dbname} downloaded successfully!")
+    else:
+        print(f"Error downloading file {node_synonymizer_dbname}.")
 
 # Download pathogen database tar file
 if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database.tar.gz")):
     # add code to download the file from Zenodo
-    pass
+    result = subprocess.run(["curl", "--cookie", "zenodo-cookies.txt", "https://zenodo.org/record/10806617/files/pathogen_database.tar.gz?download=1", "--output", os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database.tar.gz")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')} downloaded successfully!")
+    else:
+        print(f"Error downloading file {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')}.")
 else:
     if not os.path.exists(os.path.join(DATA_PATH, "pathogen_database")):
         result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
-            print("File extracted successfully!")
+            print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')} extracted successfully!")
         else:
-            print("Error extracting file for pathogen_database.")
+            print(f"Error extracting file for pathogen_database from {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')}.")
 
 # Download GTDB_tk taxonomy assignment
 if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk.tar.gz")):
     # add code to download the file from Zenodo
-    pass
+    result = subprocess.run(["curl", "--cookie", "zenodo-cookies.txt", "https://zenodo.org/record/10806617/files/taxonomy_assignment_by_GTDB_tk.tar.gz?download=1", "--output", os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk.tar.gz")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'taxonomy_assignment_by_GTDB_tk.tar.gz')} downloaded successfully!")
+    else:
+        print(f"Error downloading file for {os.path.join(DATA_PATH, 'Zenodo_data', 'taxonomy_assignment_by_GTDB_tk.tar.gz')}.")
 else:
     if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk")):
         result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
-            print("File extracted successfully!")
+            print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'taxonomy_assignment_by_GTDB_tk.tar.gz')} extracted successfully!")
         else:
-            print("Error extracting file for taxonomy_assignment_by_GTDB_tk.")
+            print(f"Error extracting file for {os.path.join(DATA_PATH, 'Zenodo_data', 'taxonomy_assignment_by_GTDB_tk.tar.gz')}.")
 
 # Download AMRFinderResults
 if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults.tar.gz")):
     # add code to download the file from Zenodo
-    pass
+    result = subprocess.run(["curl", "--cookie", "zenodo-cookies.txt", "https://zenodo.org/record/10806617/files/AMRFinderResults.tar.gz?download=1", "--output", os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults.tar.gz")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'AMRFinderResults.tar.gz')} downloaded successfully!")
+    else:
+        print(f"Error downloading file for {os.path.join(DATA_PATH, 'Zenodo_data', 'AMRFinderResults.tar.gz')}.")
 else:
     if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults")):
         result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "AMRFinderResults.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
-            print("File extracted successfully!")
+            print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'AMRFinderResults.tar.gz')} extracted successfully!")
         else:
-            print("Error extracting file for AMRFinderResults.")
+            print(f"Error extracting file for {os.path.join(DATA_PATH, 'Zenodo_data', 'AMRFinderResults.tar.gz')}.")
 
 
 ## Build Rules
