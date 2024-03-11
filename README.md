@@ -15,7 +15,8 @@ MetagenomicKG is a novel metagenomics knowledge graph which integrates the commo
     + [UMLS API key](#umls-api-key)
     + [KEGG FTP Data](#kegg-ftp-data)
   * [Build MetagenomicKG](#build-metagenomickg)
-  * [Replicate Use Case2 Sample-specific Graph Embeddings]()
+  * [Replicate Use Case2 Sample-specific Graph Embeddings](#replicate-use-case2-sample-specific-graph-embeddings)
+  * [Replicate Use Case3 Pathogen Predictions](#replicate-use-case3-pathogen-predictions)
   
 ## About Graph
 MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 14 node types and 33 edge types (see statistics in the table below).
@@ -133,7 +134,7 @@ To replicate the results of use case 2, you can simply run the Snakemake pipelie
 snakemake --cores 16 -s run_usecase2_pipeline.smk targets
 ```
 
-## Replicate Use Case3 Pathogen Prediction
+## Replicate Use Case3 Pathogen Predictions
 To replicate the results of use case 3, you can simply run the Snakemake pipelie via:
 ```bash
 snakemake --cores 16 -s run_usecase3_pipeline.smk targets
