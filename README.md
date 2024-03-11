@@ -21,7 +21,7 @@ MetagenomicKG is a novel metagenomics knowledge graph which integrates the commo
 ## About Graph
 MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 14 node types and 33 edge types (see statistics in the table below).
 
-We have provided the pre-built version of MetagenomicKG, you can download it from [here](https://pennstateoffice365-my.sharepoint.com/:u:/g/personal/cqm5886_psu_edu/EcJBYxxMpvpFsYcWY1ApUaoB2tM11wRHQnZVx1cQpjYY9w?e=qfcYNy). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
+We have provided the pre-built version of MetagenomicKG, you can download it from [here](https://pennstateoffice365-my.sharepoint.com/:u:/g/personal/cqm5886_psu_edu/EcJBYxxMpvpFsYcWY1ApUaoB2tM11wRHQnZVx1cQpjYY9w?e=qfcYNy). We also host a neo4j entry for MetagenomicKG: [coming soon]. If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
 
 __Node Statistics__
 | **Node Type**      | **Node Count** |
