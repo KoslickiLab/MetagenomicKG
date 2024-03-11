@@ -15,7 +15,7 @@ MetagenomicKG is a novel metagenomics knowledge graph which integrates the commo
     + [UMLS API key](#umls-api-key)
     + [KEGG FTP Data](#kegg-ftp-data)
   * [Build MetagenomicKG](#build-metagenomickg)
-  * [Use Case1 Pathogen Identification](#use-case1-pathogen-identification)
+  * [Replicate Use Case2 Sample-specific Graph Embeddings]()
   
 ## About Graph
 MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 14 node types and 33 edge types (see statistics in the table below).
