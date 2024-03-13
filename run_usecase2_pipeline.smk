@@ -28,7 +28,7 @@ if not os.path.exists(USECASE2_RESULTS_PATH):
 rule targets:
     input:
         os.path.join(USECASE2_RESULTS_PATH, "sample_embeddings.csv"),
-        os.path.join(USECASE2_RESULTS_PATH, "tSNE_results.png")
+        os.path.join(USECASE2_RESULTS_PATH, "PCoA_results.png")
 
 # Generate KG-based metagenomic sample embeddings
 rule generate_kg_sample_embeddings:
@@ -36,7 +36,7 @@ rule generate_kg_sample_embeddings:
         script = ancient(os.path.join(USECASE2_SCRIPT_PATH, "generate_kg_sample_embeddings.py")),
         existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
         existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')),
-        abund_metagenomic_samples = ancient(os.path.join(USECASE2_INPUT_PATH, "subsample_140_funiqweighted_fillna0.csv")),
+        abund_metagenomic_samples = ancient(os.path.join(USECASE2_INPUT_PATH, "subsample_100_funiqweighted_fillna0.csv")),
         output_dir = ancient(USECASE2_RESULTS_PATH)
     params:
         alpha = 0.95,
@@ -51,12 +51,12 @@ rule visualize_kg_sample_embeddings:
     input:
         script = ancient(os.path.join(USECASE2_SCRIPT_PATH, "visualize_kg_sample_embeddings.py")),
         metadata = ancient(os.path.join(USECASE2_INPUT_PATH, "metadata_bodysite_subsample.tsv")),
-        raw_abundance = ancient(os.path.join(USECASE2_INPUT_PATH, "subsample_140_funiqweighted_fillna0.csv")),
+        raw_abundance = ancient(os.path.join(USECASE2_INPUT_PATH, "subsample_100_funiqweighted_fillna0.csv")),
         embeddings = os.path.join(USECASE2_RESULTS_PATH, "sample_embeddings.csv"),
         output_dir = ancient(USECASE2_RESULTS_PATH)
     params:
         top_values = 1000
     output:
-        os.path.join(USECASE2_RESULTS_PATH, "tSNE_results.png")
+        os.path.join(USECASE2_RESULTS_PATH, "PCoA_results.png")
     run:
         shell("python {input.script} --metadata {input.metadata} --raw_abundance {input.raw_abundance} --embeddings {input.embeddings} --top_values {params.top_values} --output_dir {input.output_dir}")

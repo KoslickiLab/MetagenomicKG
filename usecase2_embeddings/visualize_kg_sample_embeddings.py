@@ -11,7 +11,8 @@ import pandas as pd
 import argparse
 import logging
 from functools import reduce
-from sklearn.manifold import TSNE
+from sklearn.manifold import MDS
+from sklearn.metrics import pairwise_distances
 import matplotlib.pyplot as plt
 
 ## Import custom libraries
@@ -60,22 +61,26 @@ if __name__ == "__main__":
     # Merge all DataFrames in the list on 'node_id'
     merged_df = reduce(lambda left, right: pd.merge(left, right, on='node_id', how='outer'), top_dfs)
     
-    # Fill NaN values with its original value
+    # Filter embeddings based on the merged_df
     merged_df = embeddings.loc[embeddings['node_id'].isin(merged_df['node_id'].to_list()),:]
     X2 = merged_df.iloc[:,1:].to_numpy().T
     
-    # Perform t-SNE
-    logger.info('Performing t-SNE...')
-    tsne = TSNE(n_components=2, random_state=args.random_state)
-    X1_tsne = tsne.fit_transform(X1)
-    X2_tsne = tsne.fit_transform(X2)
-    tsne_df_X1 = pd.DataFrame(X1_tsne, columns=['tsne_dim1', 'tsne_dim2'])
-    tsne_df_X2 = pd.DataFrame(X2_tsne, columns=['tsne_dim1', 'tsne_dim2'])
+    # Perform PCoA (MDS with cosine)
+    logger.info('Performing PCoA (MDS with cosine)...')
+    # Calculate the pairwise distance matrix
+    distance_matrix_X1 = pairwise_distances(X1, metric='cosine')
+    distance_matrix_X2 = pairwise_distances(X2, metric='cosine')
+    # Perform MDS
+    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=args.random_state)
+    X1_mds = mds.fit_transform(distance_matrix_X1)
+    X2_mds = mds.fit_transform(distance_matrix_X2)
+    mds_df_X1 = pd.DataFrame(X1_mds, columns=['mds_dim1', 'mds_dim2'])
+    mds_df_X2 = pd.DataFrame(X2_mds, columns=['mds_dim1', 'mds_dim2'])
     
     # Generate plot data
     body_site_label = pd.DataFrame([sample_to_label[sample] for sample in merged_df.columns[1:]], columns=['body_site'])
-    plot_data_X1 = pd.concat([body_site_label, tsne_df_X1], axis=1)
-    plot_data_X2 = pd.concat([body_site_label, tsne_df_X2], axis=1)
+    plot_data_X1 = pd.concat([body_site_label, mds_df_X1], axis=1)
+    plot_data_X2 = pd.concat([body_site_label, mds_df_X2], axis=1)
     
     # Generate plot
     logger.info('Generating plot...')
@@ -86,7 +91,7 @@ if __name__ == "__main__":
     plot_data_combined = [plot_data_X1, plot_data_X2]
 
     # Titles for each subplot
-    titles = ['tSNE result based on raw aundance vectors', 'tSNE result based on sample-specific embeddings']
+    titles = ['PCoA result based on raw aundance vectors', 'PCoA result based on sample-specific embeddings']
 
     for ax, plot_data, title in zip(axs, plot_data_combined, titles):
         # Loop through each body site in the current plot_data
@@ -94,16 +99,16 @@ if __name__ == "__main__":
             # Filter data for the current body site
             subset = plot_data[plot_data['body_site'] == body_site]
             # Plot the filtered data
-            ax.scatter(subset['tsne_dim1'], subset['tsne_dim2'], label=body_site)
+            ax.scatter(subset['mds_dim1'], subset['mds_dim2'], label=body_site)
         
         # Set title, labels and legend for each subplot
         ax.set_title(title, fontsize=23)
-        ax.set_xlabel('t-SNE Dimension 1', fontsize=18)
-        ax.set_ylabel('t-SNE Dimension 2', fontsize=18)
+        ax.set_xlabel('PCoA Dimension 1', fontsize=18)
+        ax.set_ylabel('PCoA Dimension 2', fontsize=18)
         ax.legend(title='Body Site')
 
     # Adjust layout to prevent overlap
     plt.tight_layout()
     
     # Save the plot
-    plt.savefig(os.path.join(args.output_dir, 'tSNE_results.png'))
+    plt.savefig(os.path.join(args.output_dir, 'PCoA_results.png'))
