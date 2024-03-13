@@ -1,1 +1,101 @@
-/scratch/shared_data_new/metagenomics_graph/task_bodysite_cluster/subsample_140_7_sites/metadata_bodysite_subsample.tsv
+f_uid	size	subject_id	sample_body_site	subject_gender	subject_race	study_full_name	project_name
+f1533_HMP_HHS	3349416338	764245047	gingiva	female		HHS	HMP
+f1726_HMP_HHS	2921012338	765195863	gingiva	female		HHS	HMP
+f1618_HMP_HHS	4477479493	159369152	gingiva	male		HHS	HMP
+f735_HMP_HHS	4013409482	508703490	gingiva	female		HHS	HMP
+f563_HMP_HHS	2076612375	246515023	gingiva	female		HHS	HMP
+f197_HMP_HHS	528571147	257905678	gingiva	female		HHS	HMP
+f380_HMP_HHS	4936532169	159632143	gingiva	male		HHS	HMP
+f1778_HMP_HHS	2208415867	675950834	gingiva	female		HHS	HMP
+f99_HMP_HHS	2773824100	159571453	gingiva	male		HHS	HMP
+f210_HMP_HHS	7414658019	370425937	gingiva	female		HHS	HMP
+f414_HMP_HHS	1750375866	765337473	gingiva	female		HHS	HMP
+f194_HMP_HHS	7025254248	763456073	gingiva	female		HHS	HMP
+f615_HMP_HHS	5764834568	159814214	gingiva	male		HHS	HMP
+f418_HMP_HHS	1570093484	764062976	gingiva	female		HHS	HMP
+f1189_HMP_HHS	4394526810	764062976	gingiva	female		HHS	HMP
+f581_HMP_HHS	2343809812	158337416	gingiva	female		HHS	HMP
+f426_HMP_HHS	2010009104	763961826	gingiva	male		HHS	HMP
+f637_HMP_HHS	6058508753	159247771	gingiva	female		HHS	HMP
+f436_HMP_HHS	8808147038	158802708	gingiva	male		HHS	HMP
+f446_HMP_HHS	4611691377	158499257	gingiva	male		HHS	HMP
+f148_HMP_HHS	543797195	535376874	buccal mucosa	male		HHS	HMP
+f21_HMP_HHS	2177601944	596625983	buccal mucosa	male		HHS	HMP
+f1642_HMP_HHS	1997285837	360880230	buccal mucosa	female		HHS	HMP
+f348_HMP_HHS	2212472306	658594300	buccal mucosa	male		HHS	HMP
+f225_HMP_HHS	2989019610	159490532	buccal mucosa	male		HHS	HMP
+f385_HMP_HHS	2032952956	763901136	buccal mucosa	female		HHS	HMP
+f745_HMP_HHS	2058407555	993302508	buccal mucosa	male		HHS	HMP
+f402_HMP_HHS	868467112	159915365	buccal mucosa	female		HHS	HMP
+f1164_HMP_HHS	1820005644	525622796	buccal mucosa	female		HHS	HMP
+f56_HMP_HHS	1972341549	612472597	buccal mucosa	female		HHS	HMP
+f285_HMP_HHS	730883727	159611913	buccal mucosa	male		HHS	HMP
+f431_HMP_HHS	426285456	160400887	buccal mucosa	male		HHS	HMP
+f660_HMP_HHS	7501743655	160603188	buccal mucosa	male		HHS	HMP
+f439_HMP_HHS	1890177232	823052294	buccal mucosa	male		HHS	HMP
+f442_HMP_HHS	2694832160	508703490	buccal mucosa	female		HHS	HMP
+f580_HMP_HHS	1215927949	159369152	buccal mucosa	male		HHS	HMP
+f667_HMP_HHS	8772338400	160178356	buccal mucosa	male		HHS	HMP
+f748_HMP_HHS	4891645429	764366428	buccal mucosa	female		HHS	HMP
+f490_HMP_HHS	1608379154	763721271	buccal mucosa	female		HHS	HMP
+f725_HMP_HHS	1548894002	764083206	buccal mucosa	male		HHS	HMP
+f1738_HMP_HHS	2741020417	208027353	posterior fornix of vagina	female		HHS	HMP
+f1728_HMP_HHS	298225407	638754422	posterior fornix of vagina	female		HHS	HMP
+f675_HMP_HHS	1899024379	764851951	posterior fornix of vagina	female		HHS	HMP
+f271_HMP_HHS	5633381833	508703490	posterior fornix of vagina	female		HHS	HMP
+f1246_HMP_HHS	503082504	764649650	posterior fornix of vagina	female		HHS	HMP
+f534_HMP_HHS	2730575062	763456073	posterior fornix of vagina	female		HHS	HMP
+f84_HMP_HHS	2725701123	763719065	posterior fornix of vagina	female		HHS	HMP
+f406_HMP_HHS	2011761595	765539774	posterior fornix of vagina	female		HHS	HMP
+f410_HMP_HHS	6595616096	809635352	posterior fornix of vagina	female		HHS	HMP
+f559_HMP_HHS	1550343991	764062976	posterior fornix of vagina	female		HHS	HMP
+f302_HMP_HHS	2557260372	257905678	posterior fornix of vagina	female		HHS	HMP
+f602_HMP_HHS	1546917686	763557224	posterior fornix of vagina	female		HHS	HMP
+f381_HMP_HHS	1655239762	764791260	posterior fornix of vagina	female		HHS	HMP
+f1244_HMP_HHS	1908918516	643185023	posterior fornix of vagina	female		HHS	HMP
+f24_HMP_HHS	6862114031	246515023	posterior fornix of vagina	female		HHS	HMP
+f461_HMP_HHS	1954074368	441369442	posterior fornix of vagina	female		HHS	HMP
+f475_HMP_HHS	5742782002	764811490	posterior fornix of vagina	female		HHS	HMP
+f1301_HMP_HHS	3502332600	884419868	posterior fornix of vagina	female		HHS	HMP
+f154_HMP_HHS	8289336913	160502038	posterior fornix of vagina	female		HHS	HMP
+f495_HMP_HHS	9596764847	246515023	posterior fornix of vagina	female		HHS	HMP
+f251_HMP_HHS	6454827975	160178356	right retroauricular crease	male		HHS	HMP
+f1207_HMP_HHS	4018882567	160603188	right retroauricular crease	male		HHS	HMP
+f478_HMP_HHS	7850334675	159753524	right retroauricular crease	female		HHS	HMP
+f379_HMP_HHS	1266269195	764083206	right retroauricular crease	male		HHS	HMP
+f1193_HMP_HHS	5036439490	160502038	right retroauricular crease	female		HHS	HMP
+f826_HMP_HHS	770084635	159611913	right retroauricular crease	male		HHS	HMP
+f1204_HMP_HHS	4532718346	160400887	right retroauricular crease	male		HHS	HMP
+f1201_HMP_HHS	7099421960	686765762	right retroauricular crease	male		HHS	HMP
+f1371_HMP_HHS	738526173	764305738	right retroauricular crease	male		HHS	HMP
+f237_HMP_HHS	449760024	764447348	right retroauricular crease	male		HHS	HMP
+f1270_HMP_HHS	5713743269	160319967	right retroauricular crease	female		HHS	HMP
+f1549_HMP_HHS	8207957595	160603188	right retroauricular crease	male		HHS	HMP
+f994_HMP_HHS	3803980092	159591683	right retroauricular crease	male		HHS	HMP
+f64_HMP_HHS	6986818643	158944319	right retroauricular crease	female		HHS	HMP
+f1238_HMP_HHS	1504159899	404239096	right retroauricular crease	male		HHS	HMP
+f30_HMP_HHS	1117577026	765094712	right retroauricular crease	male		HHS	HMP
+f1662_HMP_HHS	493711073	763496533	right retroauricular crease	male		HHS	HMP
+f688_HMP_HHS	9582885734	159207311	right retroauricular crease	male		HHS	HMP
+f1478_HMP_HHS	7332998401	158802708	right retroauricular crease	male		HHS	HMP
+f1791_HMP_HHS	1163006142	764224817	right retroauricular crease	male		HHS	HMP
+f1711_HMP_HHS	6381482138	765195863	palatine tonsil	female		HHS	HMP
+f481_HMP_HHS	1869625684	763961826	palatine tonsil	male		HHS	HMP
+f1363_HMP_HHS	4513377194	763496533	palatine tonsil	male		HHS	HMP
+f1495_HMP_HHS	1707682313	561079058	palatine tonsil	female		HHS	HMP
+f762_HMP_HHS	7550618877	764366428	palatine tonsil	female		HHS	HMP
+f1127_HMP_HHS	6423763114	765539774	palatine tonsil	female		HHS	HMP
+f1155_HMP_HHS	272327125	763577454	palatine tonsil	female		HHS	HMP
+f1162_HMP_HHS	1588852712	289996019	palatine tonsil	male		HHS	HMP
+f33_HMP_HHS	5904774782	763395383	palatine tonsil	male		HHS	HMP
+f1281_HMP_HHS	315629571	764042746	palatine tonsil	female		HHS	HMP
+f673_HMP_HHS	2236188333	764831721	palatine tonsil	male		HHS	HMP
+f915_HMP_HHS	645763347	857980665	palatine tonsil	female		HHS	HMP
+f874_HMP_HHS	688053249	863126187	palatine tonsil	male		HHS	HMP
+f1005_HMP_HHS	3830313390	764467579	palatine tonsil	female		HHS	HMP
+f23_HMP_HHS	257104096	763577454	palatine tonsil	female		HHS	HMP
+f1156_HMP_HHS	7496635621	765377934	palatine tonsil	female		HHS	HMP
+f903_HMP_HHS	7384237839	103092734	palatine tonsil	male		HHS	HMP
+f1615_HMP_HHS	1303080378	663835652	palatine tonsil	female		HHS	HMP
+f1089_HMP_HHS	6816246473	517810313	palatine tonsil	male		HHS	HMP
+f1516_HMP_HHS	2008200347	763496533	palatine tonsil	male		HHS	HMP
