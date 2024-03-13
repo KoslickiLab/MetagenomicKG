@@ -16,6 +16,7 @@ dependencies:
   - parallel
   - snakemake==7.25.0
   - treelib
+  - scikit-learn
   - pytaxonkit
   - biopython
   - numpy
