@@ -128,6 +128,15 @@ snakemake --cores 16 -s run_buildKG_pipeline.smk targets
 
 Once it is completed, you can find merged node and edge TSV files (`KG_nodes_v6.tsv` and `KG_edges_v6.tsv`) from `./data/merged_KG` folder.
 
+## Replicate Use Case1 Hypothesis Generation and Exploration
+Once you login the neo4j instance of MetagenomicKG, you can use the following Neo4j Cypher Query to replicate what we show in the paper. In this query, we find at most 10 paths of protein - pathogen with name 'Staphylococcus aureus' - KO - pathway - disease - drug.
+```
+MATCH p=(n0:`biolink:Protein`)-[]-(n1:`biolink:OrganismTaxon`)-[]-(n2:`biolink:BiologicalEntity`)-[]-(n3:`biolink:Pathway`)-[]-(n4:`biolink:Disease`)-[]-(n5:`biolink:Drug`)
+WHERE n1.is_pathogen = "True" and ANY (n1_names IN n1.all_names WHERE n1_names contains 'Staphylococcus aureus')
+RETURN p LIMIT 10
+```
+
+
 ## Replicate Use Case2 Sample-specific Graph Embeddings
 To replicate the results of use case 2, you can simply run the Snakemake pipelie via:
 ```bash
