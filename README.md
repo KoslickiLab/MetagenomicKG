@@ -15,6 +15,7 @@ MetagenomicKG is a novel metagenomics knowledge graph which integrates the commo
     + [UMLS API key](#umls-api-key)
     + [KEGG FTP Data](#kegg-ftp-data)
   * [Build MetagenomicKG](#build-metagenomickg)
+  * [Replicate Use Case1 Hypothesis Generation and Exploration](#replicate-use-case1-hypothesis-generation-and-exploration)
   * [Replicate Use Case2 Sample-specific Graph Embeddings](#replicate-use-case2-sample-specific-graph-embeddings)
   * [Replicate Use Case3 Pathogen Predictions](#replicate-use-case3-pathogen-predictions)
   
@@ -135,7 +136,6 @@ MATCH p=(n0:`biolink:Protein`)-[]-(n1:`biolink:OrganismTaxon`)-[]-(n2:`biolink:B
 WHERE n1.is_pathogen = "True" and ANY (n1_names IN n1.all_names WHERE n1_names contains 'Staphylococcus aureus')
 RETURN p LIMIT 10
 ```
-
 
 ## Replicate Use Case2 Sample-specific Graph Embeddings
 To replicate the results of use case 2, you can simply run the Snakemake pipelie via:
