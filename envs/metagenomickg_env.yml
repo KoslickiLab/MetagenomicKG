@@ -21,6 +21,7 @@ dependencies:
   - biopython
   - numpy
   - tqdm
+  - neo4j
   - transformers
   - sourmash
   - yacht
