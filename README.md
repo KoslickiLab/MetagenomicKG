@@ -1,5 +1,10 @@
 # MetagenomicKG
-MetagenomicKG is a novel metagenomics knowledge graph which integrates the commonly-used taxonomic information and other biomedical knowledge.
+MetagenomicKG is a novel metagenomics knowledge graph that integrates commonly used taxonomic information (GTDB), functional annotations (KEGG), pathogenicity resources (BV-BRC), and other biomedical knowledge. 
+
+The associated preprint can be found at: https://www.biorxiv.org/content/10.1101/2024.03.14.585056v1. Please cite via:
+>Ma, C., Liu, S., & Koslicki, D. (2024). MetagenomicKG: A Knowledge Graph for Metagenomic Applications. bioRxiv, 2024-03.
+
+</br> 
 
 ![figure1](https://github.com/KoslickiLab/MetagenomicKG/assets/20031672/22c538a3-7d27-4e79-b07a-35b721314afa)
 
