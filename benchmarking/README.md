@@ -19,14 +19,12 @@ This folder contains descriptions and scripts for obtaining and processing data 
    1. [Identify non-pathogen genomes from healthy samples by YACHT](#negative)
    2. [Generate ANI matrix for data split](#ani)
 
-5. Usecase 3: baseline models
+5. Usecase 3: baseline models for pathogen detection
 
-   1. PaPrBaG
-   2. DeePac
-   3. Random Forest with 4-to-6-mer frequencies
-   4. SVM with 4-to-6-mer embeddings
+   1. [PaPrBaG](#paprbag)
+   2. [DeePac](#deepac)
+   3. [RF and SVM with 4-to-6-mer frequencies](#rf)
 
-   
 
 
 
@@ -183,7 +181,243 @@ python <path-2-data_split/make_heatmap.py>
 
 
 
+</br>
+
+## Usecase 3: pathogen detection
+
+Our training data contains bacterial genomes from HMP healthy samples (negative) and known pathogens from KEGG and BV-BRC (positive). They are separated into 3 subgroups for model training and testing purpose:
+
+1. training set: genomes and labels are used for model training
+2. validation set: genomes and labels are used for internal model validation during training cycles
+3. testing set: serves as external data to evaludate model performance by comparing predictions results with known labels
+
+We intentionally applied 2 data split methods:
+
+1. regular 10-folder cross validation: genomes are randomly assigned to each set in a rolling basis
+2. species maskout: the testing set contains genomes that are NOT close (measured by low ANI) to training genomes
+
+The evaluation matric used is:
+
+```
+ Accuracy (ACC), 
+ Positive Accuracy (PACC), 
+ Negative Accuracy (NACC), 
+ Area Under the Receiver Operating Characteristic Curve (AUROC), 
+ Average Precision (AP), 
+ F1 score (F1) 
+```
+
+</br>
+
+### Pathogen prediction by PaPrBag <a name="paprbag"></a>
+
+---
+
+[PaPrBaG](https://github.com/crarlus/paprbag) is a R package that would first extract sequence-based features out of input reads or contigs and then apply a random forest classifer for pathogen prediction on read or contig level. The genome-wide prediciton is achieved by a majority vote from all contigs within genome. Here we give an example of processing cluster maskout data, but we can apply to arbitrary genome lists by switching the input nodes file. 
+
+#### Installation in R
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Biostrings")
+install.packages("devtools")
+devtools::install_github("crarlus/paprbag")
+
+# it seems R can't properly handle the environment for "devtools", 
+# use "conda install conda-forge::r-devtools" is an alternative way to install it inside an environment
+```
+
+</br>
+
+#### Extract features from sequence data
+
+1. Input data: our MKG nodes file used in the graph model contains all necessary information. Here we only need its column 1 (file id) and column 7 (pathogen status)
+   1. genome list: 2-column tsv file with `file identifier` and `label`. For example: `GCA_002404795.1	False`; they are split into 3 subfiles: training, validation (not used here), and test
+   2. filepath: a txt file containing fasta file paths of all genomes (downloaded from NCBI by file id). Genomes can be downloaded by `datasets download` and then use `realpath` to get its path.
+2. Output:
+   1. dir `PaPrBag_output_cluster_mask_${time}`: a dir containing intermediate outputs for PaPrBaG
+   2. Under the directory above:
+      1. `training.tsv`: a "|" deliminated table of training data ready to train a RF classifer
+      2. `validation.tsv`: a "|" deliminated table of test data (the name is confusing, though) ready test the RF classifer
+
+```
+# use cluster maskout sample as example, we can dereive 3 tsv file storing nodes information in the graph
+cut -f 1,7 train_set.tsv | sed '1d' > label_cluster_mask_train.tsv
+cut -f 1,7 test_set.tsv | sed '1d' > label_cluster_mask_test.tsv
+cut -f 1,7 valid_set.tsv | sed '1d' > label_cluster_mask_valid.tsv
+
+# we only need genome id and label here
+training_list=label_cluster_mask_train.tsv
+test_list=label_cluster_mask_test.tsv
+
+# prepare genomes into proper format for PaPrBaG (get contig-level labels and merge all input contigs)
+bash <path-2-run_paprbag/prepare_genome_files_as_input.sh> ${training_list} ${test_list} <filepath_w_absolute_paths_of_all_genomes>  output_cluster_mask
+
+# run PaPrBaG to extract features
+cd PaPrBag_output_cluster_mask_${time_tag}
+Rscript <path-2-run_paprbag/paprbag_extract_feature.R>
+```
+
+</br>
+
+#### Train a RF classifier and examine the results
+
+In our benchmarking analysis, we found the default `evaluation` function in R didn't give a fixed output label order. For a consistent prediction and for uniform performance calculation, we moved all the downstream analysis in Python. Output:
+
+1. `py_contig_level_RF_prediction.tsv`: this is the direct output from PaPrBaG that predicts pathogen status on contig level
+2. `py_RF_performance.tsv`: this is the genome-level results summary for this input sample
+
+```
+# continue of previous part
+conda activate metagenomickg_env
+
+# train a RF classifier and make contig-level prediction
+python <path-2-run_paprbag/run_py_RF.py>
+
+# aggregate contig-level predictions into genome-level, and get performance
+python <path-2-run_paprbag/get_py_RF_performance.py>
+```
 
 
 
+</br>
+
+### Pathogen prediction by DeePac <a name="deepac"></a>
+
+---
+
+[DeePac](https://gitlab.com/rki_bioinformatics/DeePaC) is a python package and a CLI tool for predicting labels (e.g. pathogenic potentials) from short DNA sequences (e.g. Illumina reads) with interpretable reverse-complement neural networks. Similar to PaPrBag, it gives fragment-level predictions and then do a majority vote for genome prediction by average probability. Here we give an example of processing cluster maskout data, but we can apply to arbitrary genome lists by switching the input nodes file. 
+
+#### Environment setup
+
+```
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+
+conda create -n deepac python=3.9
+conda activate deepac
+conda install deepac
+conda install anaconda::ipython
+
+# need an older version of numpy (with depreciated method 'typeDict')
+pip install numpy==1.22.4
+```
+
+</br>
+
+#### Prepare training npy data for DeePac
+
+The input data is same as PaPrBaG, we need:
+
+1. filepath: a txt file containing fasta file paths of all genomes (downloaded from NCBI by file id). Genomes can be downloaded by `datasets download` and then use `realpath` to get its path.
+2. genome list: 2-column tsv file with `file identifier` and `label`. For example: `GCA_002404795.1	False`; they are split into 3 subfiles: training, validation, and test. They can be extracted from the nodes file used in graph models (col1 and col7)
+
+**Warning:**
+
+1. it's highly recommended to train the model on GPU, o.w. additional computational cost and model transformation are required 
+2. the training data is **EXTREMELY large** because DeePac:
+   1. chop genomes into overlapping fragments of length 250 (for efficiency, we set this overlap to 0)
+   2. generate 1-hot encoding for ALL fragments
+   3. for example, a 60MB fasta file will be transformed in to 3GB training data in npy format in our testing
+   4. therefor, the deepac process is MEM-extensive (expect max 500GB for the analysis below)
+3. **Please specify resouce usage for model training** in the model training part, parameters:
+   1. `-r` for rapid CNN mode, use `-s` for sensitive LSTM mode
+   2. `-n` thread number
+   3. `-g` specify GPU to use, default ALL
+
+```
+# the input data is the same as PaPrBaG, we just need a files containing genome id and label
+training_list=label_cluster_mask_train.tsv
+valid_list=label_cluster_mask_valid.tsv 
+test_list=label_cluster_mask_test.tsv
+
+# prepare input data (time consuming and MEM extensive)
+nohup bash <path-2-run_deepac/prepare_train_valid_metric_from_input_lists.sh> ${traiing_list} ${valid_list} cluster_mask <filepath file> <path-2-run_deepac/build_training_metric_from_fragments.py> &
+
+# model training (time consuming, computationally expensive)
+conda activate deepac
+cd DeePac_cluster_mask_${time_tag}/input_npy
+nohup deepac train -r -T train.npy -t label_train.npy -V valid.npy -v label_valid.npy -R model -n 96 -g 2 &
+
+
+# make prediction
+# models and training outputs are stored in input_npy/logs/model-logs, you may want to pick different one than the last round of training
+model_file=$(realpath ./input_npy/logs/model-logs/model-e015.h5)
+
+conda activate deepac
+bash <path-2-run_deepac/make_prediction_for_test_data_with_selected_model.sh> ${model_file} ${test_list} <filepath file>
+
+
+# summarize results
+# go to the DeePac_cluster_mask_${time_tag} folder where you can find "input_npy" dir
+python <path-2-run_deepac/get_deepac_performance.py> <path-2-run_deepac/metrics.py>
+```
+
+</br>
+
+### Pathogen prediction by 4-to-6-mer frequencies <a name="rf"></a>
+
+---
+
+In the PaPrBaG manuscript, the authors benchmarked on lots of feature combinations and found that the 4-mer frequencies give best discriminative power. Similarly, 4-mer frequencies are widely used for contig binning in metagenomic analysis. In order to get whole-genome-level prediction comparisons, we collected 4-to-6-mer frequency information and use them to train RF and SVM models.
+
+#### Environment setup
+
+```
+conda create -n kmer_model
+conda activate kmer_model
+conda install conda-forge::biopython
+conda install anaconda::scikit-learn
+conda install conda-forge::gensim
+```
+
+
+
+</br>
+
+#### Analysis
+
+The input data is same as PaPrBaG, we need:
+
+1. filepath: a txt file containing fasta file paths of all genomes (downloaded from NCBI by file id). Genomes can be downloaded by `datasets download` and then use `realpath` to get its path.
+2. genome list: 2-column tsv file with `file identifier` and `label`. For example: `GCA_002404795.1	False`; they are split into 3 subfiles: training, validation, and test. They can be extracted from the nodes file used in graph models (col1 and col7)
+
+```
+# go to the dir where you want to store results
+conda activate kmer_model
+
+# the input data is the same as PaPrBaG, we just need a files containing genome id and label
+training_list=label_cluster_mask_train.tsv
+test_list=label_cluster_mask_test.tsv
+filepath=<path-2-all-fasta-genomes>
+
+
+############ RF with 4-mer abundance
+# build kmer abundance vector (last column "label")
+cut -f 1 ${training_list} | grep -f - ${filepath} > temp_filepath_training.txt
+cut -f 1 ${test_list} | grep -f - ${filepath} > temp_filepath_test.txt
+### vector for training data
+# 2nd parameter is k_length
+python <path-2-run_kmer_based_models/make_kmer_vector.py> temp_filepath_training.txt 4 ${training_list} k4_vector_training.csv
+python <path-2-run_kmer_based_models/make_kmer_vector.py> temp_filepath_test.txt 4 ${test_list} k4_vector_test.csv
+
+# make prediction
+python <path-2-run_kmer_based_models/train_RF_and_predict.py> k4_vector_training.csv k4_vector_test.csv ${test_list}
+
+# then we can directly summarize results as it's genome-level
+
+
+############# SVM with 6-mer embedding
+# 1st, we need to train Word2vec models based on input sequences
+# the 2nd parameter is for k length, used 6 here
+cat temp_filepath_training.txt temp_filepath_test.txt > merged_files_for_word2vec.txt
+python <path-2-run_kmer_based_models/word2vec_train_model.py> merged_files_for_word2vec.txt 6 out_word2vec_model
+
+# generate sample specific embeddings:
+python <path-2-run_kmer_based_models/word2vec_generate_embedding.py> merged_files_for_word2vec.txt out_word2vec_model 6 
+```
 
