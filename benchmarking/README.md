@@ -386,6 +386,11 @@ The input data is same as PaPrBaG, we need:
 1. filepath: a txt file containing fasta file paths of all genomes (downloaded from NCBI by file id). Genomes can be downloaded by `datasets download` and then use `realpath` to get its path.
 2. genome list: 2-column tsv file with `file identifier` and `label`. For example: `GCA_002404795.1	False`; they are split into 3 subfiles: training, validation, and test. They can be extracted from the nodes file used in graph models (col1 and col7)
 
+Output data:
+
+1. `py_genome_level_RF_prediction.tsv`: genome level prediction probability with true label
+2. `py_genome_level_SVM_prediction.tsv`: genome level prediction probability with true label
+
 ```
 # go to the dir where you want to store results
 conda activate kmer_model
@@ -418,6 +423,9 @@ cat temp_filepath_training.txt temp_filepath_test.txt > merged_files_for_word2ve
 python <path-2-run_kmer_based_models/word2vec_train_model.py> merged_files_for_word2vec.txt 6 out_word2vec_model
 
 # generate sample specific embeddings:
-python <path-2-run_kmer_based_models/word2vec_generate_embedding.py> merged_files_for_word2vec.txt out_word2vec_model 6 
+python <path-2-run_kmer_based_models/word2vec_generate_embedding.py> merged_files_for_word2vec.txt out_word2vec_model 6 both_pos_neg_embeddings.csv
+
+# after adding labels, we can do similar model training/prediction as the previous RF model
+python <path-2-run_kmer_based_models/train_SVM_and_predict_based_on_word2vec_embeddings.py> both_pos_neg_embeddings.csv ${training_list} ${test_list} 
 ```
 
