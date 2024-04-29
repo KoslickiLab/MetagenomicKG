@@ -13,6 +13,8 @@ The associated preprint can be found at: https://www.biorxiv.org/content/10.1101
 
 - [Metagenomic](#metagenomickg)
   * [About Graph](#about-graph)
+    + [Download pre-built MKG](#download-pre-built-mkg)
+    + [Neo4j instance](#neo4j-instance)
   * [Virtual Environment Installation](#virtual-environment-installation)
     + [Using Conda](#using-conda)
     + [Using Mamba](#using-mamba)
@@ -27,7 +29,11 @@ The associated preprint can be found at: https://www.biorxiv.org/content/10.1101
 ## About Graph
 MetagenomicKG integrates knowledge from 7 relevant data sources: GTDB taxonomy, NCBI taxonomy, KEGG, RTX-KG2, BV-BRC, MicroPhenoDB, and NCBI AMRFinderPlus Prediction. It consists of 14 node types and 33 edge types (see statistics in the table below).
 
-We have provided the pre-built version of MetagenomicKG, you can download the `MetagenomicKG.zip` file from [Zenodo](https://zenodo.org/records/10819216). We also host a neo4j instance for MetagenomicKG: [http://mkg.cse.psu.edu:7474/](http://mkg.cse.psu.edu:7474/) (Username:`neo4j`, Password:`klabneo4j`). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
+### Download pre-built MKG
+We have provided the pre-built version of MetagenomicKG, you can download the `MetagenomicKG.zip` file from [Zenodo](https://zenodo.org/records/10819216). 
+
+### Neo4j instance
+We also host a neo4j instance for MetagenomicKG: [http://mkg.cse.psu.edu:7474/](http://mkg.cse.psu.edu:7474/) (Username:`neo4j`, Password:`klabneo4j`). If you would like to rebuild it or reproduce the use case reulsts reported in our paper, you can follow the instruction below.
 
 __Node Statistics__
 | **Node Type**      | **Node Count** |
