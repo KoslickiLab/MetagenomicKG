@@ -13,7 +13,7 @@ To create your Conda environment, follow these steps:
 ```bash
 # Clone the YACHT repository
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
-cd MetagenomicKG
+cd MetagenomicKG/run_GTDB_tk/
 
 # Create a new virtual environment named 'gtdb_tk_env'
 conda env create -f ../envs/gtdb_tk_env.yml
