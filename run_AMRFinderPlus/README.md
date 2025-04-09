@@ -47,7 +47,7 @@ cd ./GTDB
 wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/bac120_taxonomy_r214.tsv
 wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/ar53_taxonomy_r214.tsv
 less ar53_taxonomy_r214.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' > GTDB_genome_list
-less bac120_taxonomy_r214.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' > GTDB_genome_list
+less bac120_taxonomy_r214.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' >> GTDB_genome_list
 
 ## download genomes and run AMRFinderPlus
 nohup bash run.sh 32 &
