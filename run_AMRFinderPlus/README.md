@@ -10,7 +10,7 @@ To create your Conda environment, follow these steps:
 ```bash
 # Clone the YACHT repository
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
-cd MetagenomicKG
+cd MetagenomicKG/run_AMRFinderPlus/
 
 # Create a new virtual environment named 'amrfinderplus_env'
 conda env create -f ../envs/amrfinderplus_env.yml
