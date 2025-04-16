@@ -30,7 +30,7 @@ conda activate gtdb_tk_env
 
 1. this process can take several hours. So it's recommended to run in background.
 
-2. `download-db.sh` is a built-in script in GTDB-tk that downloads a specific version of GTDB database. You can check or edit this version by modifying the links inside this script. By default, our analysis utilizes GTDB-tk v2.3.2 and GTDB r214.
+2. `download-db.sh` is a built-in script in GTDB-tk that downloads a specific version of GTDB database. You can check or edit this version by modifying the links inside this script. By default, our analysis utilizes GTDB-tk v2.4.0 and GTDB r220.
 
 ```
 # this will download ~100GB ref data into local disk and takes long time to run
