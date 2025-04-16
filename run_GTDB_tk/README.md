@@ -15,7 +15,7 @@ To create your Conda environment, follow these steps:
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
 cd MetagenomicKG/run_GTDB_tk/
 
-# Create a new virtual environment named 'gtdb_tk_env'
+# Create a new virtual environment named 'gtdb_tk_env', current version is 2.4.0
 conda env create -f ../envs/gtdb_tk_env.yml
 
 # Activate the newly created environment
@@ -33,6 +33,7 @@ conda activate gtdb_tk_env
 2. `download-db.sh` is a built-in script in GTDB-tk that downloads a specific version of GTDB database. You can check or edit this version by modifying the links inside this script. By default, our analysis utilizes GTDB-tk v2.3.2 and GTDB r214.
 
 ```
+# this will download ~100GB ref data into local disk and takes long time to run
 nohup download-db.sh & 
 ```
 
