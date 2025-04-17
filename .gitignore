@@ -15,3 +15,11 @@ nohup.out
 ## sqlite database files
 *.sqlite
 **/*.sqlite
+
+## gtdb-tk related files
+*.tar.gz
+run_GTDB_tk/release226/
+run_GTDB_tk/test*/
+
+
+
