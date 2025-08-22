@@ -15,3 +15,10 @@ nohup.out
 ## sqlite database files
 *.sqlite
 **/*.sqlite
+
+## data files
+data/
+
+## seq data
+run_AMRFinderPlus/GTDB/seqs/
+run_AMRFinderPlus/NCBI/
