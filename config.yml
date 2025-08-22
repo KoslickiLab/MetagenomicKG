@@ -1,5 +1,5 @@
 BUILD_KG_VARIABLES:
-  GTDB_VERSION: '214'
+  GTDB_VERSION: '226'
   UMLS_API_KEY: 'UMLS_API_KEY' # Replace with your UMLS API key
   KEGG_FTP_DATA_DIR: '/scratch/shared_data_new/KEGG_FTP/2023-10-11/kegg' # Replace with your KEGG FTP data directory
 

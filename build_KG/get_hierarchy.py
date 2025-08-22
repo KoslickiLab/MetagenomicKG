@@ -66,6 +66,13 @@ def parse_taxonomy2(taxonomy_file, taxonomy_metadata_file, logger, type='bacteri
         x = x.replace('Hartigia','Candidatus Hartigia')
         x = x.replace('RCC1774','Acaryochloris thomasi')
         x = x.replace('Metallosphaera javensis','Metallosphaera javensis (ex Hofmann et al. 2022)')
+        x = x.replace('Bacteroides muris','Bacteroides muris (ex Afrizal et al. 2022)')
+        x = x.replace('Gemmatimonadetes','Gemmatimonadia')
+        x = x.replace('Aquificae', 'Aquificia')
+        x = x.replace('Limicola', 'Candidatus Limicola')
+        x = x.replace('Robertmurraya yapensis', 'Robertmurraya yapensis (ex Hitch et al 2024)')
+        x = x.replace('Novosphingobium mangrovi', 'Novosphingobium mangrovi (ex Huang et al. 2023)')
+        x = x.replace('Pseudaminobacter soli', 'Pseudaminobacter soli (ex Li et al. 2025)')
         return x
 
     def __fix_gtdb_bug2(x):
@@ -76,16 +83,19 @@ def parse_taxonomy2(taxonomy_file, taxonomy_metadata_file, logger, type='bacteri
     ## get all parent taxids
     all_parent_names = list(set([__fix_gtdb_bug1(y.split('__')[1]) for x in list(taxonomy[1]) for y in x.split(';')]))
     taxids = pytaxonkit.name2taxid(all_parent_names)
-    ## distinguish which is is correct if there are multiple taxids
+    # remove duplicate rows
+    taxids = taxids.drop_duplicates()
+    
+    ## distinguish which is correct if there are multiple taxids
     duplicates = taxids.loc[taxids['Name'].isin(taxids['Name'][taxids['Name'].duplicated()]),:].reset_index(drop=True)
     if len(duplicates) > 0:
         taxid_fiter_out_duplicates = taxids[~taxids['Name'].isin(duplicates['Name'])].reset_index(drop=True)
         temp = pytaxonkit.lineage(list(duplicates['TaxID']))
         duplicates = duplicates.merge(temp, on=['Name','TaxID'], how='left').reset_index(drop=True)
         if type == 'bacteria':
-            duplicates = duplicates.loc[(duplicates['Lineage'].str.contains('Bacteria;')) & (~duplicates['Lineage'].isna()),:].reset_index(drop=True)
+            duplicates = duplicates.loc[(duplicates['FullLineage'].str.contains('Bacteria')) & (~duplicates['FullLineage'].isna()),:].reset_index(drop=True)
         elif type == 'archaea':
-            duplicates = duplicates.loc[(duplicates['Lineage'].str.contains('Archaea;')) & (~duplicates['Lineage'].isna()),:].reset_index(drop=True)
+            duplicates = duplicates.loc[(duplicates['FullLineage'].str.contains('Archaea')) & (~duplicates['FullLineage'].isna()),:].reset_index(drop=True)
         else:
             logger.error(f"Type {type} is not supported.")
             sys.exit(1)

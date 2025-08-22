@@ -23,7 +23,7 @@ elif 'UMLS_API_KEY' in config['BUILD_KG_VARIABLES'] and config['BUILD_KG_VARIABL
     umls_apikey = config['BUILD_KG_VARIABLES']['UMLS_API_KEY']
 else:
     raise ValueError("UMLS_API_KEY is not set in the environment or the config file. Please set it in 'config.yaml' file before running the pipeline.")
-node_synonymizer_dbname = 'node_synonymizer_v1.0_KG2.8.4.sqlite'
+node_synonymizer_dbname = 'node_synonymizer_v1.0_KG2.10.0.sqlite'
 neo4j_dbname = 'MetagenomicsKG'
 
 ## Create Required Folders
@@ -41,16 +41,16 @@ if not os.path.exists(os.path.join(DATA_PATH, "neo4j")):
 ## Download GTDB Data
 # Call the wget command using subprocess
 if not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"bac120_taxonomy_r{GTDB_version}.tsv")) or \
-    not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"bac120_metadata_r{GTDB_version}.tar.gz")) or \
+    not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"bac120_metadata_r{GTDB_version}.tsv.gz")) or \
     not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"ar53_taxonomy_r{GTDB_version}.tsv")) or \
-    not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"ar53_metadata_r{GTDB_version}.tar.gz")):
-    for cur_file in [f'bac120_taxonomy_r{GTDB_version}.tsv', f'bac120_metadata_r{GTDB_version}.tar.gz', f'ar53_taxonomy_r{GTDB_version}.tsv', f'ar53_metadata_r{GTDB_version}.tar.gz',]:
+    not os.path.exists(os.path.join(DATA_PATH, "GTDB_data", f"ar53_metadata_r{GTDB_version}.tsv.gz")):
+    for cur_file in [f'bac120_taxonomy_r{GTDB_version}.tsv', f'bac120_metadata_r{GTDB_version}.tsv.gz', f'ar53_taxonomy_r{GTDB_version}.tsv', f'ar53_metadata_r{GTDB_version}.tsv.gz',]:
         destination_path = os.path.join(DATA_PATH, "GTDB_data", cur_file)
         result = subprocess.run(["wget", "-O", destination_path, GTDB_DOWNLOAD_URL + cur_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Check if the download was successful
         if result.returncode == 0:
-            if cur_file.endswith('.tar.gz'):
-                result = subprocess.run(["tar", "-xvzf", destination_path, '-C', os.path.join(DATA_PATH, "GTDB_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if cur_file.endswith('.tsv.gz'):
+                result = subprocess.run(["gunzip", destination_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if result.returncode == 0:
                     print(f"File {destination_path} downloaded and extracted successfully!")
                 else:
