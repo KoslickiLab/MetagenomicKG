@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from tqdm import tqdm
 
@@ -8,6 +9,10 @@ accession_file = pd.read_csv(accession_file, sep='\t', header=None)
 # combine AMR results
 combined_df = []
 for assembly_id in tqdm(accession_file[0].to_list()):
+    # first check if the file size is 0
+    if os.path.getsize(f'seqs/{assembly_id}/amrfinder_results.txt') == 0:
+        print(f'{assembly_id} is empty', flush=True)
+        continue
     temp_df = pd.read_csv(f'seqs/{assembly_id}/amrfinder_results.txt', sep='\t', header=0)
     temp_df['genome_id'] = assembly_id
     temp_df['source'] = 'GTDB'

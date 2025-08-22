@@ -46,6 +46,8 @@ function download_seq_and_run_amrfinder() {
                 echo ${accession} >> $1/finished_accession_list.txt;
             fi
         fi
+    else
+        echo ${accession} >> $1/empty_result_list.txt;
     fi
     rm -rf README.md ncbi_dataset.zip ncbi_dataset;
 }
@@ -57,4 +59,23 @@ if [ ! -d $current_dir/seqs ]; then
 fi
 
 ## download data in parallel
-less $current_dir/GTDB_genome_list | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+# Create a temporary file with filtered IDs that haven't been processed yet
+if [ -f $current_dir/empty_result_list.txt ] && [ -f $current_dir/finished_accession_list.txt ]; then
+    echo "Filtering out already processed genomes..."
+    cat $current_dir/GTDB_genome_list | grep -v -f $current_dir/empty_result_list.txt | grep -v -f $current_dir/finished_accession_list.txt > $current_dir/GTDB_genome_list.filtered
+    echo "Original genome count: $(wc -l < $current_dir/GTDB_genome_list)"
+    echo "Filtered genome count: $(wc -l < $current_dir/GTDB_genome_list.filtered)"
+    
+    # Use the filtered list for processing
+    cat $current_dir/GTDB_genome_list.filtered | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+    
+    # Clean up temporary file
+    rm -f $current_dir/GTDB_genome_list.filtered
+else
+    echo "'empty_result_list.txt' and 'finished_accession_list.txt' do not exist, processing all genomes."
+    less $current_dir/GTDB_genome_list | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+fi
+
+
+
+

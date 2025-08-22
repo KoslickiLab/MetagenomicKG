@@ -62,4 +62,40 @@ less viruses_hierarchy.tsv | cut -f 6 | sed '1d' | sort -u > child_taxids.txt;
 comm -13 <(sort  parent_taxids.txt) <(sort child_taxids.txt) > unique_download_taxids.txt
 
 ## download data in parallel
-less $current_dir/unique_download_taxids.txt | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+# Create a temporary file with filtered IDs that haven't been processed yet
+if [ -f $current_dir/empty_result_list.txt ] && [ -f $current_dir/finished_taxids_list.txt ]; then
+    echo "Filtering out already processed genomes..."
+    cat $current_dir/unique_download_taxids.txt | grep -v -f $current_dir/empty_result_list.txt | grep -v -f $current_dir/finished_taxids_list.txt > $current_dir/unique_download_taxids.txt.filtered
+    echo "Original genome count: $(wc -l < $current_dir/unique_download_taxids.txt)"
+    echo "Filtered genome count: $(wc -l < $current_dir/unique_download_taxids.txt.filtered)"
+    
+    # Use the filtered list for processing
+    cat $current_dir/unique_download_taxids.txt.filtered | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+    
+    # Clean up temporary file
+    rm -f $current_dir/unique_download_taxids.txt.filtered
+else
+    echo "'empty_result_list.txt' and 'finished_taxids_list.txt' do not exist, processing all genomes."
+    less $current_dir/unique_download_taxids.txt | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
+fi
+
+
+
+
+
+
+
+
+
+# check if all IDs in finished_taxids_list.txt have a folder with ID as name under seqs directory, if not, then run amrfinder for those ID
+if [ -f $current_dir/finished_taxids_list.txt ]; then
+    cat $current_dir/finished_taxids_list.txt | while read taxid; do
+        if [ ! -d $current_dir/fungi_seqs/$taxid ]; then
+            echo "Running AMRFinderPlus for $taxid..."
+            echo $taxid >> $current_dir/finished_taxids_list_temp.txt
+        fi
+    done
+fi
+
+# use the filtered list for processing
+cat $current_dir/finished_taxids_list_temp.txt | parallel -j $1 --link download_seq_and_run_amrfinder $current_dir {};
