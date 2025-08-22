@@ -18,7 +18,7 @@ The associated preprint can be found at: https://www.biorxiv.org/content/10.1101
   * [Virtual Environment Installation](#virtual-environment-installation)
     + [Using Conda](#using-conda)
     + [Using Mamba](#using-mamba)
-  * [Modify `config.yaml` File If Needed ](#modify-configyaml-file-if-needed)
+  * [Configuration Setup](#configuration-setup)
     + [UMLS API key](#umls-api-key)
     + [KEGG FTP Data](#kegg-ftp-data)
   * [Build MetagenomicKG](#build-metagenomickg)
@@ -121,14 +121,76 @@ conda activate metagenomickg_env
 ### Using Mamba
 If you prefer using Mamba instead of Conda, just simply repalce `conda` with `mamba` in the above commands.
 
-## Modify `config.yaml` File If Needed 
-Before rebuilding MetagenomicKG and replicating the results of use cases, you can should modify some global variables in the `config.yaml` file. We listed some required variables below: 
+## Configuration Setup
+MetagenomicKG uses a centralized configuration system through the `config.yml` file. Before rebuilding MetagenomicKG and replicating use case results, you should configure the system for your environment.
 
-### UMLS API key
-Since we utilize the Unified Medical Language System (UMLS) search function via UMLS APIs for identifier mapping, you should first get a UMLS API key (please follow [this instruction](https://documentation.uts.nlm.nih.gov/rest/authentication.html) to get one). After that, replace `UMLS_API_KEY` with your API key in the `config.yaml` file.
+### Configuration File Structure
+The `config.yml` file contains several configuration sections:
 
-### KEGG FTP Data
-MetagenomicKG includes KEGG data downloaded from KEGG FTP. According to KEGG policy, we cannot provide this dataset. To obtain this dataset, you can follow [this instruction](https://www.kegg.jp/kegg/download/). Once you download data, you should replace the path of `KEGG_FTP_DATA_DIR` key in the `config.yaml` file.
+```yaml
+BUILD_KG_VARIABLES:
+  # Required: API keys and data directories
+  UMLS_API_KEY: 'your_umls_api_key_here'
+  KEGG_FTP_DATA_DIR: '/path/to/your/kegg/data'
+  
+  # Database configuration
+  NODE_SYNONYMIZER_DBNAME: 'node_synonymizer_v1.0_KG2.10.0.sqlite'
+  NEO4J_DBNAME: 'MetagenomicsKG'
+  
+  # Neo4j connection (can be overridden by environment variables)
+  NEO4J_BOLT: 'bolt://localhost:7687'
+  NEO4J_USERNAME: 'neo4j'
+  NEO4J_PASSWORD: 'your_neo4j_password'
+  
+  # Processing thresholds (can be customized based on your needs)
+  ANI_THRESHOLD: 99.5
+  AF_THRESHOLD: 0.0
+  COVERAGE_THRESHOLD: 80
+  IDENTITY_THRESHOLD: 90
+  
+  # KG file names (customizable for different versions)
+  KG_FILES:
+    NODES_V1: 'KG_nodes_v1.tsv'
+    EDGES_V1: 'KG_edges_v1.tsv'
+    # ... additional file versions
+```
+
+### Required Configuration Changes
+
+#### UMLS API Key
+Since we utilize the Unified Medical Language System (UMLS) search function via UMLS APIs for identifier mapping, you must first obtain a UMLS API key:
+1. Follow [this instruction](https://documentation.uts.nlm.nih.gov/rest/authentication.html) to get an API key
+2. Replace `UMLS_API_KEY` with your actual API key in `config.yml`
+
+#### KEGG FTP Data
+MetagenomicKG includes KEGG data downloaded from KEGG FTP. According to KEGG policy, we cannot provide this dataset:
+1. Follow [this instruction](https://www.kegg.jp/kegg/download/) to obtain the dataset
+2. Replace `KEGG_FTP_DATA_DIR` with the path to your KEGG data directory in `config.yml`
+
+#### Neo4j Connection (Optional)
+Configure Neo4j connection parameters in `config.yml` or set as environment variables:
+- **Config file approach**: Update `NEO4J_BOLT`, `NEO4J_USERNAME`, and `NEO4J_PASSWORD` in `config.yml`
+- **Environment variables approach** (takes precedence over config file):
+  ```bash
+  export neo4j_bolt="bolt://your-neo4j-server:7687"
+  export neo4j_username="your_username"
+  export neo4j_password="your_password"
+  ```
+
+### Optional Configuration Customization
+
+#### Processing Thresholds
+You can adjust processing thresholds based on your requirements:
+- `ANI_THRESHOLD`: Average Nucleotide Identity threshold for strain identification (default: 99.5)
+- `AF_THRESHOLD`: Alignment Fraction threshold for strain identification (default: 0.0)
+- `COVERAGE_THRESHOLD`: Coverage threshold for AMR gene selection (default: 80)
+- `IDENTITY_THRESHOLD`: Identity threshold for AMR gene selection (default: 90)
+
+#### Database and File Names
+The configuration system allows you to customize:
+- Database names (`NODE_SYNONYMIZER_DBNAME`, `NEO4J_DBNAME`)
+- KG file names for different processing versions
+- Output file names for final Neo4j import
 
 ## Build MetagenomicKG
 We constructed an automatic pipeline to rebuild MetagenomicKG via [Snakemake](https://snakemake.readthedocs.io/en/stable). Since MetagenomicKG uses [RTX-KG2](https://github.com/RTXteam/RTX-KG2), which includes UMLS data, you need to contact authors to demonstrate that you have accepted [the license terms](https://www.nlm.nih.gov/databases/umls.html) in order to get access to download KG2. We will provide you with a password so you can download the file [here](https://www.dropbox.com/scl/fi/o6458g9ai4ietb4kqp7sx/kg2c-v2.8.4-tsv.tar.gz?rlkey=0bbpesjmz5zct1axt0146xpdg&st=mjaqt9ml&dl=0). **Note**: you do _not_ need this file to view/interact with the [MetagenomicsKG](https://zenodo.org/records/10819216), it's just for if you want to _rebuild_ it. Once you have access, please download and put the `kg2c-tsv.tar.gz` file to `./data/RTX_KG2` folder.
