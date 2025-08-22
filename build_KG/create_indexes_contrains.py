@@ -1,10 +1,12 @@
 import neo4j
 import os
+from config_loader import get_neo4j_config
 
-# Load environment variables
-neo4j_bolt = os.environ['neo4j_bolt']
-neo4j_username = os.environ['neo4j_username']
-neo4j_password = os.environ['neo4j_password']
+# Load Neo4j configuration
+neo4j_config = get_neo4j_config()
+neo4j_bolt = neo4j_config['neo4j_bolt']
+neo4j_username = neo4j_config['neo4j_username']  
+neo4j_password = neo4j_config['neo4j_password']
 
 # Initialize the Neo4j driver
 driver = neo4j.GraphDatabase.driver(neo4j_bolt, auth=(neo4j_username, neo4j_password))

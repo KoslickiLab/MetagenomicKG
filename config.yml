@@ -2,6 +2,38 @@ BUILD_KG_VARIABLES:
   GTDB_VERSION: '226'
   UMLS_API_KEY: 'UMLS_API_KEY' # Replace with your UMLS API key
   KEGG_FTP_DATA_DIR: '/scratch/shared_data_new/KEGG_FTP/2023-10-11/kegg' # Replace with your KEGG FTP data directory
+  
+  # Database Names
+  NODE_SYNONYMIZER_DBNAME: 'node_synonymizer_v1.0_KG2.10.0.sqlite'
+  NEO4J_DBNAME: 'MetagenomicsKG'
+  
+  # Neo4j Connection Parameters (can also be set as environment variables)
+  NEO4J_BOLT: 'bolt://localhost:7687'  # Replace with your Neo4j bolt URL
+  NEO4J_USERNAME: 'neo4j'              # Replace with your Neo4j username
+  NEO4J_PASSWORD: 'password'           # Replace with your Neo4j password
+  
+  # Processing Thresholds
+  ANI_THRESHOLD: 99.5     # ANI threshold to identify the same strain
+  AF_THRESHOLD: 0.0       # AF threshold to identify the same strain
+  COVERAGE_THRESHOLD: 80  # Coverage threshold for AMR gene selection
+  IDENTITY_THRESHOLD: 90  # Identity threshold for AMR gene selection
+  
+  # KG File Versions and Names
+  KG_FILES:
+    NODES_V1: 'KG_nodes_v1.tsv'
+    EDGES_V1: 'KG_edges_v1.tsv'
+    NODES_V2: 'KG_nodes_v2.tsv'
+    EDGES_V2: 'KG_edges_v2.tsv'
+    NODES_V3: 'KG_nodes_v3.tsv'
+    EDGES_V3: 'KG_edges_v3.tsv'
+    NODES_V4: 'KG_nodes_v4.tsv'
+    EDGES_V4: 'KG_edges_v4.tsv'
+    NODES_V5: 'KG_nodes_v5.tsv'
+    EDGES_V5: 'KG_edges_v5.tsv'
+    NODES_V6: 'KG_nodes_v6.tsv'
+    EDGES_V6: 'KG_edges_v6.tsv'
+    FINAL_NODES: 'nodes.tsv'
+    FINAL_EDGES: 'edges.tsv'
 
 USECASE3_VARIABLES:
   EXPERIMENT_NAME: 'pathogen_detection'

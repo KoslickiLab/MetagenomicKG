@@ -23,8 +23,8 @@ elif 'UMLS_API_KEY' in config['BUILD_KG_VARIABLES'] and config['BUILD_KG_VARIABL
     umls_apikey = config['BUILD_KG_VARIABLES']['UMLS_API_KEY']
 else:
     raise ValueError("UMLS_API_KEY is not set in the environment or the config file. Please set it in 'config.yaml' file before running the pipeline.")
-node_synonymizer_dbname = 'node_synonymizer_v1.0_KG2.10.0.sqlite'
-neo4j_dbname = 'MetagenomicsKG'
+node_synonymizer_dbname = config['BUILD_KG_VARIABLES']['NODE_SYNONYMIZER_DBNAME']
+neo4j_dbname = config['BUILD_KG_VARIABLES']['NEO4J_DBNAME']
 
 ## Create Required Folders
 if not os.path.exists(os.path.join(DATA_PATH, "KEGG_data")):
@@ -153,20 +153,20 @@ rule targets:
         os.path.join(DATA_PATH, "KEGG_data", "kegg_drugs.txt"),
         os.path.join(DATA_PATH, "KEGG_data", "kegg_rclasses.txt"),
         os.path.join(DATA_PATH, "KEGG_data", "kegg_dgroups.txt"),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v1.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v1.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v2.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v2.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v3.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v3.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v4.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v4.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v5.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv'),
-        os.path.join(DATA_PATH, "neo4j", "input_files", 'nodes.tsv'),
-        os.path.join(DATA_PATH, "neo4j", "input_files", 'edges.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V1']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V1']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V2']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V2']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V3']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V3']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V4']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V4']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V5']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V5']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V6']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V6']),
+        os.path.join(DATA_PATH, "neo4j", "input_files", config['BUILD_KG_VARIABLES']['KG_FILES']['FINAL_NODES']),
+        os.path.join(DATA_PATH, "neo4j", "input_files", config['BUILD_KG_VARIABLES']['KG_FILES']['FINAL_EDGES'])
 
 
 # Get Taxonomy hierarchy for Archeaa and Bacteria from GTDB as well as Fungi and Viruses from NCBI Taxonomy
@@ -223,8 +223,8 @@ rule step2_integrate_microbial_hierarchy:
         archaea_hierarchy_unused = ancient(os.path.join(DATA_PATH, "Micobial_hierarchy", "archaea_hierarchy.tsv")),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v1.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v1.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V1']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V1'])
     run:
         shell("python {input.script} --data_dir {input.data_dir} --bacteria_metadata {input.bacteria_metadata} --archaea_metadata {input.archaea_metadata} --output_dir {input.output_dir}")
 
@@ -236,17 +236,17 @@ rule step3_integrate_kegg_data:
         kegg_data_dir = ancient(config['BUILD_KG_VARIABLES']['KEGG_FTP_DATA_DIR']),
         kegg_processed_data_dir = ancient(os.path.join(DATA_PATH, "KEGG_data")),
         gtdb_assignment = ancient(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk", "merged_KEGG_assignment.tsv")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v1.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v1.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V1'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V1'])),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG")),
         unused_file = ancient(os.path.join(DATA_PATH, "KEGG_data", "kegg_compounds.txt"))
     params:
         microb_only = True,
-        ani_threshold = 99.5,
-        af_threshold = 0.0
+        ani_threshold = config['BUILD_KG_VARIABLES']['ANI_THRESHOLD'],
+        af_threshold = config['BUILD_KG_VARIABLES']['AF_THRESHOLD']
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v2.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v2.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V2']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V2'])
     run:
         if params.microb_only:
             shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --kegg_data_dir {input.kegg_data_dir} --kegg_processed_data_dir {input.kegg_processed_data_dir} --gtdb_assignment {input.gtdb_assignment} --microb_only --ANI_threshold {params.ani_threshold} --AF_threshold {params.af_threshold} --output_dir {input.output_dir}")
@@ -257,13 +257,13 @@ rule step3_integrate_kegg_data:
 rule step4_integrate_kg2_data:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_KG2.py")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v2.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v2.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V2'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V2'])),
         data_dir = ancient(os.path.join(DATA_PATH, "RTX_KG2")),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v3.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v3.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V3']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V3'])
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --data_dir {input.data_dir} --output_dir {input.output_dir}")
 
@@ -271,8 +271,8 @@ rule step4_integrate_kg2_data:
 rule step5_integrate_bvbrc_data:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_BVBRC.py")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v3.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v3.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V3'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V3'])),
         data_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database", "BV-BRC")),
         gtdb_assignment = ancient(os.path.join(DATA_PATH, "Zenodo_data", "taxonomy_assignment_by_GTDB_tk", "merged_BVBRC_assignment.tsv")),
         synonymizer_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data")),
@@ -280,11 +280,11 @@ rule step5_integrate_bvbrc_data:
     params:
         umls_api_key = umls_apikey,
         synonymizer_dbname = node_synonymizer_dbname,
-        ani_threshold = 99.5,
-        af_threshold = 0.0
+        ani_threshold = config['BUILD_KG_VARIABLES']['ANI_THRESHOLD'],
+        af_threshold = config['BUILD_KG_VARIABLES']['AF_THRESHOLD']
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v4.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v4.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V4']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V4'])
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --data_dir {input.data_dir} --gtdb_assignment {input.gtdb_assignment} --synonymizer_dir {input.synonymizer_dir} --synonymizer_dbname {params.synonymizer_dbname} --umls_api_key {params.umls_api_key} --ANI_threshold {params.ani_threshold} --AF_threshold {params.af_threshold} --output_dir {input.output_dir}")
 
@@ -293,8 +293,8 @@ rule step5_integrate_bvbrc_data:
 rule step5_integrate_micropheno_data:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_MicroPhenoDB.py")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v4.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v4.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V4'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V4'])),
         data_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data", 'pathogen_database', 'MicroPhenoDB')),
         synonymizer_dir = ancient(os.path.join(DATA_PATH, "Zenodo_data")),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
@@ -302,8 +302,8 @@ rule step5_integrate_micropheno_data:
         umls_api_key = umls_apikey,
         synonymizer_dbname = node_synonymizer_dbname
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v5.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V5']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V5'])
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --data_dir {input.data_dir} --synonymizer_dir {input.synonymizer_dir} --synonymizer_dbname {params.synonymizer_dbname} --umls_api_key {params.umls_api_key} --output_dir {input.output_dir}")
 
@@ -311,17 +311,17 @@ rule step5_integrate_micropheno_data:
 rule step6_integrate_amr_data:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_AMR.py")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v5.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v5.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V5'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V5'])),
         amr_result = ancient(os.path.join(DATA_PATH, "Zenodo_data", 'AMRFinderResults', 'all_AMR_result.tsv')),
         amr_metadata = ancient(os.path.join(DATA_PATH, "Zenodo_data", 'AMRFinderResults', 'ReferenceGeneCatalog.txt')),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     params:
-        coverage_threshold = 80,
-        identity_threshold = 90
+        coverage_threshold = config['BUILD_KG_VARIABLES']['COVERAGE_THRESHOLD'],
+        identity_threshold = config['BUILD_KG_VARIABLES']['IDENTITY_THRESHOLD']
     output:
-        os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv'),
-        os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V6']),
+        os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V6'])
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --amr_result {input.amr_result} --amr_metadata {input.amr_metadata} --coverage_threshold {params.coverage_threshold} --identity_threshold {params.identity_threshold} --output_dir {input.output_dir}")
 
@@ -330,13 +330,13 @@ rule step6_integrate_amr_data:
 rule step7_prepare_neo4j_inputs:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "neo4j_utils", "prepare_neo4j_inputs.py")),
-        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_nodes_v6.tsv')),
-        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", 'KG_edges_v6.tsv')),
+        existing_KG_nodes = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['NODES_V6'])),
+        existing_KG_edges = ancient(os.path.join(DATA_PATH, "merged_KG", config['BUILD_KG_VARIABLES']['KG_FILES']['EDGES_V6'])),
         kg_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     params:
         output_dir = os.path.join(DATA_PATH, "neo4j", "input_files")
     output:
-        os.path.join(DATA_PATH, "neo4j", "input_files", 'nodes.tsv'),
-        os.path.join(DATA_PATH, "neo4j", "input_files", 'edges.tsv')
+        os.path.join(DATA_PATH, "neo4j", "input_files", config['BUILD_KG_VARIABLES']['KG_FILES']['FINAL_NODES']),
+        os.path.join(DATA_PATH, "neo4j", "input_files", config['BUILD_KG_VARIABLES']['KG_FILES']['FINAL_EDGES'])
     run:
         shell("python {input.script} --existing_KG_nodes {input.existing_KG_nodes} --existing_KG_edges {input.existing_KG_edges} --kg_dir {input.kg_dir} --output_dir {params.output_dir}")
