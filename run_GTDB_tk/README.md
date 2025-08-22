@@ -13,9 +13,9 @@ To create your Conda environment, follow these steps:
 ```bash
 # Clone the YACHT repository
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
-cd MetagenomicKG
+cd MetagenomicKG/run_GTDB_tk/
 
-# Create a new virtual environment named 'gtdb_tk_env'
+# Create a new virtual environment named 'gtdb_tk_env', current version is 2.4.0
 conda env create -f ../envs/gtdb_tk_env.yml
 
 # Activate the newly created environment
@@ -28,12 +28,30 @@ conda activate gtdb_tk_env
 
 ---
 
-1. this process can take several hours. So it's recommended to run in background.
+1. This process can take several hours. So it's recommended to run in the background.
 
-2. `download-db.sh` is a built-in script in GTDB-tk that downloads a specific version of GTDB database. You can check or edit this version by modifying the links inside this script. By default, our analysis utilizes GTDB-tk v2.3.2 and GTDB r214.
+2. `download-db.sh` is a built-in script in GTDB-tk that downloads a specific version of the GTDB database. You can check or edit this version by modifying the links inside this script. By default, our analysis utilizes GTDB-tk v2.4.0 and GTDB r226.
 
 ```
-nohup download-db.sh & 
+# This will download ~100GB of ref data into the local disk and takes a long time to run
+nohup download-db.sh &    # the script of version 2.4.0 downloads reference r220
+```
+
+3. (Optional) Manually download an arbitrary version of the reference. Commands below are same as the script above, you may also modify the ref links directly in step2.
+
+```
+# download ref data (you can find more versions, below is r226 in 2025.4)
+wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_package/full_package/gtdbtk_data.tar.gz
+
+# unzip data
+tar -xvzf gtdbtk_data.tar.gz
+
+# specify location, the output dir may have different names, please double check
+TARGET_DIR=$(realpath release226)
+export GTDBTK_DATA_PATH="$TARGET_DIR"
+
+# set variable in conda env for future usage
+conda env config vars set GTDBTK_DATA_PATH="$TARGET_DIR"
 ```
 
 </br>

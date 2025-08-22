@@ -10,7 +10,7 @@ To create your Conda environment, follow these steps:
 ```bash
 # Clone the YACHT repository
 git clone https://github.com/KoslickiLab/MetagenomicKG.git
-cd MetagenomicKG
+cd MetagenomicKG/run_AMRFinderPlus/
 
 # Create a new virtual environment named 'amrfinderplus_env'
 conda env create -f ../envs/amrfinderplus_env.yml
@@ -39,15 +39,15 @@ python combine.py
 ```
 
 ## Predict AMR of Genome Assemblies used in GTDB
-We first downloaded a list of 394,932 bacteria genome IDs and 7,777 archaea genome IDs based on the latest version of GTDB taxonomy (rs214) from its database FTP server. Then according to their GenBank/Refseq ids, we also utilized NCBI datasets CLI tool to obtrain the corresponding genome sequences, and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
+We first downloaded a list of 715,230 bacteria genome IDs and 17,245 archaea genome IDs based on the latest version of GTDB taxonomy (rs226) from its database FTP server. Then according to their GenBank/Refseq ids, we also utilized NCBI datasets CLI tool to obtrain the corresponding genome sequences, and ran AMRFinderPlus to predict AMR. The commands below are used to implement these procedures. 
 ```bash
 cd ./GTDB
 
 ## download bacteria and archaea genome list from GTDB website
-wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/bac120_taxonomy_r214.tsv
-wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/ar53_taxonomy_r214.tsv
-less ar53_taxonomy_r214.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' > GTDB_genome_list
-less bac120_taxonomy_r214.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' > GTDB_genome_list
+wget https://data.gtdb.ecogenomic.org/releases/release226/226.0/bac120_taxonomy_r226.tsv
+wget https://data.gtdb.ecogenomic.org/releases/release226/226.0/ar53_taxonomy_r226.tsv
+less ar53_taxonomy_r226.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' > GTDB_genome_list
+less bac120_taxonomy_r226.tsv | cut -f 1 | sed 's/RS_//' | sed 's/GB_//' >> GTDB_genome_list
 
 ## download genomes and run AMRFinderPlus
 nohup bash run.sh 32 &

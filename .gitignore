@@ -22,3 +22,8 @@ data/
 ## seq data
 run_AMRFinderPlus/GTDB/seqs/
 run_AMRFinderPlus/NCBI/
+
+## gtdb-tk related files
+*.tar.gz
+run_GTDB_tk/release226/
+run_GTDB_tk/test*/
