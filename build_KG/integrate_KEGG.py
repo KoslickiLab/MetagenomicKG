@@ -90,11 +90,11 @@ if __name__ == "__main__":
     temp_header = kegg_archaea_bacteria_assignment[0]
     mapping_gn_to_microbe_id = {}
     for row in tqdm(kegg_archaea_bacteria_assignment[1:]):
-        if (row[temp_header.index('fastani_ani')] != 'N/A' and float(row[temp_header.index('fastani_ani')]) >= args.ANI_threshold) and (row[temp_header.index('fastani_af')] != 'N/A' and float(row[temp_header.index('fastani_af')]) >= args.AF_threshold):
-            mapping_gn_to_microbe_id[f"KEGG:gn_{row[temp_header.index('user_genome')]}"] = [f"GTDB:{row[temp_header.index('fastani_reference')]}"]
+        if (row[temp_header.index('closest_genome_ani')] != 'N/A' and float(row[temp_header.index('closest_genome_ani')]) >= args.ANI_threshold) and (row[temp_header.index('closest_genome_af')] != 'N/A' and float(row[temp_header.index('closest_genome_af')]) >= args.AF_threshold):
+            mapping_gn_to_microbe_id[f"KEGG:gn_{row[temp_header.index('user_genome')]}"] = [f"GTDB:{row[temp_header.index('closest_genome_reference')]}"]
         else:
             mapping_gn_to_microbe_id[f"KEGG:gn_{row[temp_header.index('user_genome')]}"] = [f"KEGG:gn_{row[temp_header.index('user_genome')]}"]
-        mapping_gn_to_microbe_id[f"KEGG:gn_{row[temp_header.index('user_genome')]}"] += [row[temp_header.index('classification')], f"ANI_reference_radius:{row[temp_header.index('fastani_reference_radius')]}; ANI:{row[temp_header.index('fastani_ani')]}; AF:{row[temp_header.index('fastani_af')]}; classification_method:{row[temp_header.index('classification_method')]}; MSA_percent:{row[temp_header.index('msa_percent')]}"]
+        mapping_gn_to_microbe_id[f"KEGG:gn_{row[temp_header.index('user_genome')]}"] += [row[temp_header.index('classification')], f"ANI_reference_radius:{row[temp_header.index('closest_genome_reference_radius')]}; ANI:{row[temp_header.index('closest_genome_ani')]}; AF:{row[temp_header.index('closest_genome_af')]}; classification_method:{row[temp_header.index('classification_method')]}; MSA_percent:{row[temp_header.index('msa_percent')]}"]
 
     if args.microb_only:
         logger.info("Only microbial organism data (e.g. 'Archaea', 'viruses', 'Bacteria', 'Fungi') are used in KG construction.")

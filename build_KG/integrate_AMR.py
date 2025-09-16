@@ -123,7 +123,7 @@ if __name__ == "__main__":
             logger.debug(f'Unknown source {source}')
             continue
         
-        # find if the genome node exit
+        # find if the genome node exists
         pass_flag = False
         for genome_synonym in genome_synonyms:
             genome_node_id = kg.find_node_by_synonym(f"{genome_synonym}")

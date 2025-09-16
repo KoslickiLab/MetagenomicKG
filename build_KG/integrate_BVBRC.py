@@ -109,11 +109,11 @@ if __name__ == "__main__":
     temp_header = gtdb_assignment[0]
     mapping_gn_to_microbe_id = {}
     for row in tqdm(gtdb_assignment[1:]):
-        if (row[temp_header.index('fastani_ani')] != 'N/A' and float(row[temp_header.index('fastani_ani')]) >= args.ANI_threshold) and (row[temp_header.index('fastani_af')] != 'N/A' and float(row[temp_header.index('fastani_af')]) >= args.AF_threshold):
-            mapping_gn_to_microbe_id[f"BVBRC:gn_{row[temp_header.index('user_genome')]}"] = [f"GTDB:{row[temp_header.index('fastani_reference')]}"]
+        if (row[temp_header.index('closest_genome_ani')] != 'N/A' and float(row[temp_header.index('closest_genome_ani')]) >= args.ANI_threshold) and (row[temp_header.index('closest_genome_af')] != 'N/A' and float(row[temp_header.index('closest_genome_af')]) >= args.AF_threshold):
+            mapping_gn_to_microbe_id[f"BVBRC:gn_{row[temp_header.index('user_genome')]}"] = [f"GTDB:{row[temp_header.index('closest_genome_reference')]}"]
         else:
             mapping_gn_to_microbe_id[f"BVBRC:gn_{row[temp_header.index('user_genome')]}"] = [f"BVBRC:gn_{row[temp_header.index('user_genome')]}"]
-        mapping_gn_to_microbe_id[f"BVBRC:gn_{row[temp_header.index('user_genome')]}"] += [row[temp_header.index('classification')], f"ANI_reference_radius:{row[temp_header.index('fastani_reference_radius')]}; ANI:{row[temp_header.index('fastani_ani')]}; AF:{row[temp_header.index('fastani_af')]}; classification_method:{row[temp_header.index('classification_method')]}; MSA_percent:{row[temp_header.index('msa_percent')]}"]
+        mapping_gn_to_microbe_id[f"BVBRC:gn_{row[temp_header.index('user_genome')]}"] += [row[temp_header.index('classification')], f"ANI_reference_radius:{row[temp_header.index('closest_genome_reference_radius')]}; ANI:{row[temp_header.index('closest_genome_ani')]}; AF:{row[temp_header.index('closest_genome_af')]}; classification_method:{row[temp_header.index('classification_method')]}; MSA_percent:{row[temp_header.index('msa_percent')]}"]
 
     # Import BV-BRC data
     logger.info("Importing BV-BRC data...")
@@ -183,8 +183,8 @@ if __name__ == "__main__":
             elif 'taxid' not in description_dict:
                 description_dict['taxid'] = taxon_id
                 description_dict['rank'] = ncbi_rank
-            if assignment_info[2].split(';')[1].split(':')[1] != 'N/A':
-                description_dict.update(dict([tuple(item.strip().split(':')) for item in assignment_info[2].split(';')]))
+            if mapping_gn_to_microbe_id.get(f"BVBRC:gn_{genome_id}", None) and mapping_gn_to_microbe_id[f"BVBRC:gn_{genome_id}"][2].split(';')[1].split(':')[1] != 'N/A':
+                description_dict.update(dict([tuple(item.strip().split(':')) for item in mapping_gn_to_microbe_id[f"BVBRC:gn_{genome_id}"][2].split(';')]))
             existing_node.description = list(description_dict.items())
             existing_node.link = list(set(existing_node.link + [f"https://gtdb.ecogenomic.org/genome?gid={assembly_accession}", f"https://www.ncbi.nlm.nih.gov/assembly/{assembly_accession}", f"https://www.bv-brc.org/view/Genome/{genome_id}"]))
             existing_node.all_names = list(set(existing_node.all_names + [genome_name]))

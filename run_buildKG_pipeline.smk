@@ -94,7 +94,7 @@ if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database.
     else:
         print(f"Error downloading file {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')}.")
 else:
-    if not os.path.exists(os.path.join(DATA_PATH, "pathogen_database")):
+    if not os.path.exists(os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database")):
         result = subprocess.run(["tar", "-xvzf", os.path.join(DATA_PATH, "Zenodo_data", "pathogen_database.tar.gz"), '-C', os.path.join(DATA_PATH, "Zenodo_data")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
             print(f"File {os.path.join(DATA_PATH, 'Zenodo_data', 'pathogen_database.tar.gz')} extracted successfully!")
@@ -218,8 +218,8 @@ rule step2_integrate_microbial_hierarchy:
     input:
         script = ancient(os.path.join(SCRIPT_PATH, "integrate_microbial_hierarchy.py")),
         data_dir = ancient(os.path.join(DATA_PATH, "Micobial_hierarchy")),
-        bacteria_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", "bac120_metadata_r214.tsv")),
-        archaea_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", "ar53_metadata_r214.tsv")),
+        bacteria_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", f"bac120_metadata_r{GTDB_version}.tsv")),
+        archaea_metadata = ancient(os.path.join(DATA_PATH, "GTDB_data", f"ar53_metadata_r{GTDB_version}.tsv")),
         archaea_hierarchy_unused = ancient(os.path.join(DATA_PATH, "Micobial_hierarchy", "archaea_hierarchy.tsv")),
         output_dir = ancient(os.path.join(DATA_PATH, "merged_KG"))
     output:
